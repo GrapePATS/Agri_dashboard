@@ -8,8 +8,8 @@ interface DetectionCardProps {
 }
 
 const typeConfig = {
-  disease: { Icon: Microscope, label: 'โรคพืช', iconBg: 'bg-purple-50', iconColor: 'text-purple-600' },
-  weed: { Icon: Leaf, label: 'วัชพืช', iconBg: 'bg-green-50', iconColor: 'text-green-600' },
+  disease: { Icon: Microscope, label: 'โรคพืช', iconBg: 'bg-red-50', iconColor: 'text-red-600' },
+  weed: { Icon: Leaf, label: 'วัชพืช', iconBg: 'bg-[#e9f6eb]', iconColor: 'text-[#1d6233]' },
   pest: { Icon: Bug, label: 'แมลงศัตรู', iconBg: 'bg-amber-50', iconColor: 'text-amber-600' },
 };
 
@@ -26,8 +26,9 @@ export function DetectionCard({ detection }: DetectionCardProps) {
   const { Icon, label, iconBg, iconColor } = typeConfig[detection.type];
 
   return (
+    // REDESIGN: Surf Crest border instead of stone-100
     <div
-      className="bg-white rounded-2xl border border-stone-100 shadow-sm p-4 flex items-center gap-3 cursor-pointer active:bg-stone-50 transition-colors"
+      className="bg-white rounded-2xl border border-[#d2e5d3] shadow-sm p-4 flex items-center gap-3 cursor-pointer active:bg-[#e9f6eb] transition-colors"
       onClick={() => navigate(`/detections/${detection.detection_id}`)}
     >
       <div className={`shrink-0 rounded-xl p-2.5 ${iconBg}`}>

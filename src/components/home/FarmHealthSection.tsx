@@ -12,7 +12,7 @@ interface Props {
 const trendIcon = { improving: TrendingUp, stable: Minus, declining: TrendingDown };
 const trendLabel = { improving: 'ดีขึ้น', stable: 'คงที่', declining: 'แย่ลง' };
 const trendBg = {
-  improving: 'bg-green-100 text-green-700',
+  improving: 'bg-[#d2e5d3] text-[#1d6233]',
   stable: 'bg-stone-100 text-stone-600',
   declining: 'bg-red-100 text-red-700',
 };
@@ -31,9 +31,15 @@ export function FarmHealthSection({ farm, detections, lastScanLabel }: Props) {
   const hasHigh = activeDetections.some((d) => d.severity === 'high');
 
   const scoreColor =
-    score >= 75 ? 'text-green-100' : score >= 50 ? 'text-amber-100' : 'text-red-100';
+    score >= 75 ? 'text-[#e9f6eb]' : score >= 50 ? 'text-amber-100' : 'text-red-100';
+
+  // REDESIGN: Green Pea gradient for healthy; amber/red keep semantic meaning
   const scoreBg =
-    score >= 75 ? 'from-green-700 to-green-500' : score >= 50 ? 'from-amber-700 to-amber-500' : 'from-red-700 to-red-500';
+    score >= 75
+      ? 'from-[#1d6233] to-[#2a8048]'
+      : score >= 50
+      ? 'from-amber-700 to-amber-500'
+      : 'from-red-700 to-red-500';
 
   return (
     <div className="px-4 space-y-3">
@@ -41,11 +47,12 @@ export function FarmHealthSection({ farm, detections, lastScanLabel }: Props) {
       <div className={`rounded-2xl p-5 bg-gradient-to-br ${scoreBg} shadow-md`}>
         <div className="flex items-start justify-between mb-4">
           <div>
-            <p className="text-green-100 text-xs font-semibold uppercase tracking-wide mb-1">
+            {/* REDESIGN: Sinbad label color on dark card */}
+            <p className="text-[#abd8c8] text-xs font-semibold uppercase tracking-wide mb-1">
               สุขภาพฟาร์ม
             </p>
             <h2 className="text-white text-xl font-bold leading-tight">{farm.farm_name}</h2>
-            <p className="text-green-100 text-xs mt-1 opacity-80">{lastScanLabel} · {farm.total_area_rai} ไร่</p>
+            <p className="text-[#abd8c8] text-xs mt-1 opacity-90">{lastScanLabel} · {farm.total_area_rai} ไร่</p>
           </div>
 
           <div className="items-center flex flex-col">
@@ -60,7 +67,6 @@ export function FarmHealthSection({ farm, detections, lastScanLabel }: Props) {
           </div>
         </div>
 
-        {/* Critical alert inline */}
         {(hasCritical || hasHigh) && (
           <div className="bg-white/20 rounded-xl px-3 py-2 mb-3 flex items-center gap-2">
             <span className="text-base">⚠️</span>
@@ -79,7 +85,7 @@ export function FarmHealthSection({ farm, detections, lastScanLabel }: Props) {
         </button>
       </div>
 
-      {/* Detection Summary Cards */}
+      {/* Detection Summary Cards — REDESIGN: Surf Crest borders */}
       <div className="grid grid-cols-3 gap-2.5">
         <DetectionMiniCard
           emoji="🦠"
@@ -110,8 +116,8 @@ export function FarmHealthSection({ farm, detections, lastScanLabel }: Props) {
         />
       </div>
 
-      {/* Mini Map Widget */}
-      <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-stone-100">
+      {/* Mini Map Widget — REDESIGN: Surf Crest border */}
+      <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-[#d2e5d3]">
         <div className="flex items-center justify-between px-4 pt-4 pb-2">
           <div>
             <p className="text-sm font-bold text-stone-900">แผนที่ฟาร์ม</p>
@@ -124,17 +130,17 @@ export function FarmHealthSection({ farm, detections, lastScanLabel }: Props) {
 
         <MiniMapSVG mode="health" showHotspots className="h-36" />
 
-        {/* Legend */}
         <div className="flex gap-4 px-4 py-2.5">
-          <LegendItem color="bg-green-600" label="สุขภาพดี" />
+          <LegendItem color="bg-[#1d6233]" label="สุขภาพดี" />
           <LegendItem color="bg-amber-500" label="เฝ้าระวัง" />
           <LegendItem color="bg-red-600" label="วิกฤติ" />
         </div>
 
         <div className="px-4 pb-4">
+          {/* REDESIGN: Green Pea map CTA button */}
           <button
             onClick={() => navigate('/map')}
-            className="w-full bg-green-700 text-white rounded-xl py-3 flex items-center justify-center gap-2 font-semibold text-sm active:bg-green-800"
+            className="w-full bg-[#1d6233] text-white rounded-xl py-3 flex items-center justify-center gap-2 font-semibold text-sm active:bg-[#16502a]"
           >
             <Map size={16} />
             เปิดแผนที่เต็มจอ
@@ -163,12 +169,13 @@ function DetectionMiniCard({
     ? 'bg-amber-100 text-amber-700'
     : count > 0
     ? 'bg-yellow-100 text-yellow-700'
-    : 'bg-green-100 text-green-700';
+    : 'bg-[#d2e5d3] text-[#1d6233]';
 
   return (
+    // REDESIGN: Surf Crest border on mini detection cards
     <button
       onClick={onClick}
-      className="bg-white rounded-2xl shadow-sm border border-stone-100 pt-3 pb-3 px-2.5 flex flex-col items-center active:bg-stone-50 w-full"
+      className="bg-white rounded-2xl shadow-sm border border-[#d2e5d3] pt-3 pb-3 px-2.5 flex flex-col items-center active:bg-[#e9f6eb] w-full"
     >
       <div className={`w-full h-1 rounded-t-full ${topBorderColor} -mt-3 mb-3 rounded`} />
       <span className="text-2xl mb-1.5">{emoji}</span>

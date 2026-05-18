@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { BrainCircuit, Sparkles } from 'lucide-react';
+import { BottomNav } from '../components/BottomNav';
 import { useAISummary } from '../hooks/useAISummary';
 import { AISummaryCard } from '../components/ai/AISummaryCard';
 import { Button } from '../components/ui/Button';
@@ -15,16 +16,18 @@ export function AIPage() {
   };
 
   return (
-    <div className="px-4 pb-8">
+    <div className="px-4 pb-24">
       <div className="pt-4 pb-4">
         <h1 className="text-xl font-bold text-stone-900">วิเคราะห์ AI</h1>
         <p className="text-sm text-stone-500 mt-0.5">วิเคราะห์สภาพฟาร์มและรับคำแนะนำอัจฉริยะ</p>
       </div>
 
       {!hasRun && (
-        <div className="bg-gradient-to-br from-stone-50 to-green-50 border border-green-100 rounded-2xl p-8 flex flex-col items-center text-center">
-          <div className="bg-green-100 rounded-2xl p-5 mb-5">
-            <BrainCircuit size={40} className="text-green-700" strokeWidth={1.5} />
+        // REDESIGN: Panache bg + Surf Crest border on prompt card
+        <div className="bg-[#e9f6eb] border border-[#d2e5d3] rounded-2xl p-8 flex flex-col items-center text-center">
+          {/* REDESIGN: Surf Crest icon bg, Green Pea icon */}
+          <div className="bg-[#d2e5d3] rounded-2xl p-5 mb-5">
+            <BrainCircuit size={40} className="text-[#1d6233]" strokeWidth={1.5} />
           </div>
           <h2 className="text-base font-bold text-stone-900 mb-2">วิเคราะห์สภาพฟาร์ม</h2>
           <p className="text-sm text-stone-500 leading-relaxed mb-6">
@@ -41,10 +44,12 @@ export function AIPage() {
       {mutation.isPending && (
         <div className="flex flex-col items-center justify-center py-16 gap-4">
           <div className="relative">
-            <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
-              <BrainCircuit size={28} className="text-green-600" strokeWidth={1.8} />
+            {/* REDESIGN: Surf Crest inner ring, Green Pea icon */}
+            <div className="w-16 h-16 rounded-full bg-[#d2e5d3] flex items-center justify-center">
+              <BrainCircuit size={28} className="text-[#1d6233]" strokeWidth={1.8} />
             </div>
-            <div className="absolute -inset-1 rounded-full border-2 border-green-400 border-t-transparent animate-spin" />
+            {/* REDESIGN: Sinbad spinner ring */}
+            <div className="absolute -inset-1 rounded-full border-2 border-[#abd8c8] border-t-transparent animate-spin" />
           </div>
           <div className="text-center">
             <p className="text-sm font-semibold text-stone-800">กำลังวิเคราะห์ฟาร์ม…</p>
@@ -73,9 +78,10 @@ export function AIPage() {
                 minute: '2-digit',
               })}
             </p>
+            {/* REDESIGN: Green Pea re-analyze link */}
             <button
               onClick={handleRun}
-              className="text-xs text-green-600 font-medium flex items-center gap-1"
+              className="text-xs text-[#1d6233] font-medium flex items-center gap-1"
             >
               <Sparkles size={12} /> วิเคราะห์ใหม่
             </button>
@@ -83,6 +89,8 @@ export function AIPage() {
           <AISummaryCard summary={mutation.data} />
         </div>
       )}
+
+      <BottomNav />
     </div>
   );
 }

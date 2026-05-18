@@ -6,9 +6,10 @@ interface BadgeProps {
   size?: 'sm' | 'md';
 }
 
+// REDESIGN: success uses palette Surf Crest bg + Green Pea text
 const variantClasses: Record<string, string> = {
-  default: 'bg-stone-100 text-stone-700',
-  success: 'bg-green-100 text-green-800',
+  default: 'bg-[#d2e5d3] text-[#1d6233]',
+  success: 'bg-[#d2e5d3] text-[#1d6233]',
   warning: 'bg-amber-100 text-amber-800',
   danger: 'bg-red-100 text-red-800',
   neutral: 'bg-gray-100 text-gray-700',

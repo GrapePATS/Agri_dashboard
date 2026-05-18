@@ -15,9 +15,10 @@ import { SeverityBadge } from '../components/detections/SeverityBadge';
 import { Skeleton } from '../components/ui/Skeleton';
 import { Badge } from '../components/ui/Badge';
 
+// REDESIGN: weed uses Panache/Green Pea palette colors
 const typeConfig = {
-  disease: { Icon: Microscope, label: 'โรคพืช', iconBg: 'bg-purple-50', iconColor: 'text-purple-600' },
-  weed: { Icon: Leaf, label: 'วัชพืช', iconBg: 'bg-green-50', iconColor: 'text-green-600' },
+  disease: { Icon: Microscope, label: 'โรคพืช', iconBg: 'bg-red-50', iconColor: 'text-red-600' },
+  weed: { Icon: Leaf, label: 'วัชพืช', iconBg: 'bg-[#e9f6eb]', iconColor: 'text-[#1d6233]' },
   pest: { Icon: Bug, label: 'แมลงศัตรู', iconBg: 'bg-amber-50', iconColor: 'text-amber-600' },
 };
 
@@ -38,11 +39,12 @@ export function DetectionDetailPage() {
 
   return (
     <div className="pb-8">
-      <div className="sticky top-0 bg-white border-b border-stone-100 z-10">
+      {/* REDESIGN: Surf Crest border on sticky bar */}
+      <div className="sticky top-0 bg-white border-b border-[#d2e5d3] z-10">
         <div className="flex items-center gap-3 px-4 h-14">
           <button
             onClick={() => navigate(-1)}
-            className="p-2 -ml-2 rounded-xl hover:bg-stone-100 active:bg-stone-200 transition-colors"
+            className="p-2 -ml-2 rounded-xl hover:bg-[#e9f6eb] active:bg-[#d2e5d3] transition-colors"
           >
             <ArrowLeft size={20} className="text-stone-700" />
           </button>
@@ -69,7 +71,8 @@ export function DetectionDetailPage() {
           const { Icon, label, iconBg, iconColor } = typeConfig[data.type];
           return (
             <div className="space-y-4">
-              <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-4">
+              {/* REDESIGN: Surf Crest border on all detail cards */}
+              <div className="bg-white rounded-2xl border border-[#d2e5d3] shadow-sm p-4">
                 <div className="flex items-start gap-3">
                   <div className={`shrink-0 rounded-xl p-3 ${iconBg}`}>
                     <Icon size={24} className={iconColor} strokeWidth={1.8} />
@@ -87,7 +90,8 @@ export function DetectionDetailPage() {
                 </div>
               </div>
 
-              <div className="bg-stone-200 rounded-2xl overflow-hidden h-48 flex items-center justify-center">
+              {/* REDESIGN: Surf Crest placeholder bg */}
+              <div className="bg-[#d2e5d3] rounded-2xl overflow-hidden h-48 flex items-center justify-center">
                 {data.image_url ? (
                   <img src={data.image_url} alt={data.label} className="w-full h-full object-cover" />
                 ) : (
@@ -102,7 +106,7 @@ export function DetectionDetailPage() {
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-                <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-3">
+                <div className="bg-white rounded-2xl border border-[#d2e5d3] shadow-sm p-3">
                   <div className="flex items-center gap-1.5 mb-1">
                     <Target size={13} className="text-stone-400" />
                     <p className="text-xs text-stone-500">ความเชื่อมั่น</p>
@@ -111,7 +115,7 @@ export function DetectionDetailPage() {
                     {Math.round(data.confidence * 100)}%
                   </p>
                 </div>
-                <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-3">
+                <div className="bg-white rounded-2xl border border-[#d2e5d3] shadow-sm p-3">
                   <div className="flex items-center gap-1.5 mb-1">
                     <Percent size={13} className="text-stone-400" />
                     <p className="text-xs text-stone-500">พื้นที่ติดโรค</p>
@@ -122,7 +126,7 @@ export function DetectionDetailPage() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-4 space-y-3">
+              <div className="bg-white rounded-2xl border border-[#d2e5d3] shadow-sm p-4 space-y-3">
                 <div className="flex items-start gap-2.5">
                   <MapPin size={15} className="text-stone-400 shrink-0 mt-0.5" />
                   <div>
@@ -141,14 +145,15 @@ export function DetectionDetailPage() {
                 </div>
               </div>
 
-              <div className="bg-green-50 border border-green-200 rounded-2xl p-4">
+              {/* REDESIGN: Panache recommendation card, Surf Crest border */}
+              <div className="bg-[#e9f6eb] border border-[#d2e5d3] rounded-2xl p-4">
                 <div className="flex items-start gap-3">
-                  <div className="shrink-0 bg-green-100 rounded-xl p-2 mt-0.5">
-                    <CheckCircle2 size={18} className="text-green-700" strokeWidth={2} />
+                  <div className="shrink-0 bg-[#d2e5d3] rounded-xl p-2 mt-0.5">
+                    <CheckCircle2 size={18} className="text-[#1d6233]" strokeWidth={2} />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-green-900 mb-1.5">วิธีแก้ไข</p>
-                    <p className="text-sm text-green-800 leading-relaxed">
+                    <p className="text-sm font-bold text-[#1d6233] mb-1.5">วิธีแก้ไข</p>
+                    <p className="text-sm text-stone-700 leading-relaxed">
                       {data.recommendation}
                     </p>
                   </div>

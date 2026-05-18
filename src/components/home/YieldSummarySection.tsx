@@ -7,7 +7,6 @@ interface Props {
   yield_: YieldSummary;
 }
 
-// ── Growth stage timeline config ─────────────────────────────
 const GROWTH_STAGES = [
   { key: 'early', label: 'เริ่มปลูก', emoji: '🌱' },
   { key: 'vegetative', label: 'เติบโต', emoji: '🌿' },
@@ -16,26 +15,24 @@ const GROWTH_STAGES = [
   { key: 'ready', label: 'พร้อมเก็บ', emoji: '✅' },
 ] as const;
 
-// ── Grade bar config ─────────────────────────────────────────
 const GRADE_ITEMS = (bd: YieldSummary['grade_breakdown']) => [
-  { label: 'เกรด A', pct: bd.A, bar: 'bg-green-500', text: 'text-green-700' },
+  { label: 'เกรด A', pct: bd.A, bar: 'bg-[#1d6233]', text: 'text-[#1d6233]' },
   { label: 'เกรด B', pct: bd.B, bar: 'bg-amber-400', text: 'text-amber-700' },
   { label: 'เกรด C', pct: bd.C, bar: 'bg-orange-500', text: 'text-orange-700' },
   { label: 'เสียหาย', pct: bd.damaged, bar: 'bg-red-500', text: 'text-red-600' },
 ];
 
-// ── Insight icon/bg cycle ────────────────────────────────────
 const INSIGHT_META = [
   { icon: '⚠️', bg: 'bg-amber-400/20' },
   { icon: '💧', bg: 'bg-blue-400/20' },
-  { icon: '📅', bg: 'bg-green-400/20' },
-  { icon: '🌱', bg: 'bg-purple-400/20' },
+  { icon: '📅', bg: 'bg-[#abd8c8]/25' },
+  { icon: '🌱', bg: 'bg-white/15' },
 ];
 
-// ── Inline SVG area sparkline ────────────────────────────────
+// REDESIGN: Green Pea sparkline color
 function Sparkline({
   data,
-  color = '#22c55e',
+  color = '#1d6233',
   gradId,
 }: {
   data: number[];
@@ -73,7 +70,6 @@ function Sparkline({
   );
 }
 
-// ── Full analytics section ───────────────────────────────────
 export function YieldSummarySection({ yield_ }: Props) {
   const navigate = useNavigate();
   const totalTons = (yield_.estimated_kg / 1000).toFixed(1);
@@ -89,63 +85,63 @@ export function YieldSummarySection({ yield_ }: Props) {
   return (
     <div className="px-4 space-y-3">
 
-      {/* ── 1. Hero overview card ──────────────────── */}
-      <div className="rounded-2xl bg-gradient-to-br from-green-900 to-green-700 p-5 shadow-md">
+      {/* ── 1. Hero overview card — REDESIGN: Green Pea solid header */}
+      <div className="rounded-2xl bg-[#1d6233] p-5 shadow-md">
         <div className="flex items-center justify-between mb-4">
-          <p className="text-green-300 text-xs font-semibold uppercase tracking-wider">ภาพรวมผลผลิต</p>
+          {/* REDESIGN: Sinbad secondary label */}
+          <p className="text-[#abd8c8] text-xs font-semibold uppercase tracking-wider">ภาพรวมผลผลิต</p>
           <div className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold ${
-            trendUp ? 'bg-green-400/20 text-green-300' : 'bg-red-400/20 text-red-300'
+            trendUp ? 'bg-[#abd8c8]/25 text-[#abd8c8]' : 'bg-red-400/20 text-red-300'
           }`}>
             {trendUp ? <TrendingUp size={11} /> : <TrendingDown size={11} />}
             <span>{trendUp ? '+' : ''}{yield_.trend_pct}% จากสัปดาห์ที่แล้ว</span>
           </div>
         </div>
 
-        {/* Primary metrics */}
         <div className="grid grid-cols-3 gap-0 mb-5">
           <div>
-            <p className="text-green-300 text-[10px] mb-1">จำนวนต้น</p>
+            <p className="text-[#abd8c8] text-[10px] mb-1">จำนวนต้น</p>
             <p className="text-white text-2xl font-black leading-none">
               {yield_.plant_count.toLocaleString()}
             </p>
-            <p className="text-green-400 text-[10px] mt-0.5">ต้น</p>
+            <p className="text-[#abd8c8] text-[10px] mt-0.5">ต้น</p>
           </div>
           <div className="border-l border-white/15 pl-4">
-            <p className="text-green-300 text-[10px] mb-1">ผลผลิตรวม</p>
+            <p className="text-[#abd8c8] text-[10px] mb-1">ผลผลิตรวม</p>
             <div className="flex items-end gap-1">
               <p className="text-white text-2xl font-black leading-none">{totalTons}</p>
-              <p className="text-green-400 text-[10px] mb-0.5">ตัน</p>
+              <p className="text-[#abd8c8] text-[10px] mb-0.5">ตัน</p>
             </div>
           </div>
           {yield_.market_value_thb != null && (
             <div className="border-l border-white/15 pl-4">
-              <p className="text-green-300 text-[10px] mb-1">มูลค่าตลาด</p>
+              <p className="text-[#abd8c8] text-[10px] mb-1">มูลค่าตลาด</p>
               <p className="text-white text-2xl font-black leading-none">
                 {Math.round(yield_.market_value_thb / 1000)}K
               </p>
-              <p className="text-green-400 text-[10px] mt-0.5">บาท</p>
+              <p className="text-[#abd8c8] text-[10px] mt-0.5">บาท</p>
             </div>
           )}
         </div>
 
-        {/* AI confidence bar */}
         <div>
           <div className="flex items-center justify-between mb-1.5">
-            <p className="text-green-300 text-[10px]">ความเชื่อมั่น AI</p>
-            <p className="text-green-200 text-[10px] font-bold">{confidencePct}%</p>
+            <p className="text-[#abd8c8] text-[10px]">ความเชื่อมั่น AI</p>
+            <p className="text-[#abd8c8] text-[10px] font-bold">{confidencePct}%</p>
           </div>
           <div className="h-1.5 bg-white/20 rounded-full overflow-hidden">
-            <div className="h-full bg-green-300 rounded-full" style={{ width: `${confidencePct}%` }} />
+            {/* REDESIGN: Sinbad confidence bar */}
+            <div className="h-full bg-[#abd8c8] rounded-full" style={{ width: `${confidencePct}%` }} />
           </div>
         </div>
       </div>
 
-      {/* ── 2. Crop quality grade breakdown ───────── */}
-      <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-4">
+      {/* ── 2. Crop quality grade — REDESIGN: Surf Crest border */}
+      <div className="bg-white rounded-2xl shadow-sm border border-[#d2e5d3] p-4">
         <div className="flex items-center justify-between mb-3">
           <p className="text-sm font-black text-stone-900">คุณภาพผลผลิต</p>
           <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold ${
-            yield_.quality_grade === 'A' ? 'bg-green-100 text-green-700' :
+            yield_.quality_grade === 'A' ? 'bg-[#d2e5d3] text-[#1d6233]' :
             yield_.quality_grade === 'B' ? 'bg-amber-100 text-amber-700' :
             'bg-red-100 text-red-700'
           }`}>
@@ -159,7 +155,7 @@ export function YieldSummarySection({ yield_ }: Props) {
                 <span className={`text-xs font-semibold ${text}`}>{label}</span>
                 <span className="text-xs font-bold text-stone-500">{pct}%</span>
               </div>
-              <div className="h-2.5 bg-stone-100 rounded-full overflow-hidden">
+              <div className="h-2.5 bg-[#e9f6eb] rounded-full overflow-hidden">
                 <div className={`h-full ${bar} rounded-full`} style={{ width: `${pct}%` }} />
               </div>
             </div>
@@ -167,11 +163,10 @@ export function YieldSummarySection({ yield_ }: Props) {
         </div>
       </div>
 
-      {/* ── 3. Crop growth status ──────────────────── */}
-      <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-4">
+      {/* ── 3. Crop growth status — REDESIGN: Surf Crest border, Panache stat bg */}
+      <div className="bg-white rounded-2xl shadow-sm border border-[#d2e5d3] p-4">
         <p className="text-sm font-black text-stone-900 mb-4">สถานะการเติบโต</p>
 
-        {/* Stage timeline */}
         <div className="flex items-start">
           {GROWTH_STAGES.map((stage, i) => {
             const isActive = i === stageIdx;
@@ -180,20 +175,20 @@ export function YieldSummarySection({ yield_ }: Props) {
               <div key={stage.key} className="flex-1 flex flex-col items-center relative">
                 {i < GROWTH_STAGES.length - 1 && (
                   <div className={`absolute top-4 left-1/2 w-full h-0.5 ${
-                    isPast || isActive ? 'bg-green-400' : 'bg-stone-200'
+                    isPast || isActive ? 'bg-[#1d6233]' : 'bg-[#d2e5d3]'
                   }`} />
                 )}
                 <div className={`relative z-10 w-8 h-8 rounded-full flex items-center justify-center text-sm ${
                   isActive
-                    ? 'bg-green-500 ring-4 ring-green-100'
+                    ? 'bg-[#1d6233] ring-4 ring-[#d2e5d3]'
                     : isPast
-                    ? 'bg-green-500'
-                    : 'bg-stone-100'
+                    ? 'bg-[#1d6233]'
+                    : 'bg-[#e9f6eb]'
                 }`}>
                   {stage.emoji}
                 </div>
                 <p className={`text-[9px] mt-2 text-center leading-tight font-medium ${
-                  isActive ? 'text-green-700 font-bold' : isPast ? 'text-green-600' : 'text-stone-400'
+                  isActive ? 'text-[#1d6233] font-bold' : isPast ? 'text-[#1d6233]' : 'text-stone-400'
                 }`}>
                   {stage.label}
                 </p>
@@ -202,35 +197,34 @@ export function YieldSummarySection({ yield_ }: Props) {
           })}
         </div>
 
-        {/* Days stats */}
         <div className="grid grid-cols-2 gap-2 mt-4">
-          <div className="bg-stone-50 rounded-xl p-3">
+          <div className="bg-[#e9f6eb] rounded-xl p-3">
             <p className="text-stone-400 text-[10px]">ปลูกมาแล้ว</p>
             <p className="text-stone-900 text-xl font-black mt-0.5">
               {yield_.days_since_planting}{' '}
               <span className="text-sm font-normal text-stone-400">วัน</span>
             </p>
           </div>
-          <div className={`rounded-xl p-3 ${daysToHarvest <= 14 ? 'bg-amber-50' : 'bg-green-50'}`}>
-            <p className={`text-[10px] ${daysToHarvest <= 14 ? 'text-amber-500' : 'text-green-600'}`}>
+          <div className={`rounded-xl p-3 ${daysToHarvest <= 14 ? 'bg-amber-50' : 'bg-[#e9f6eb]'}`}>
+            <p className={`text-[10px] ${daysToHarvest <= 14 ? 'text-amber-500' : 'text-[#1d6233]'}`}>
               เก็บเกี่ยวในอีก
             </p>
-            <p className={`text-xl font-black mt-0.5 ${daysToHarvest <= 14 ? 'text-amber-700' : 'text-green-800'}`}>
+            <p className={`text-xl font-black mt-0.5 ${daysToHarvest <= 14 ? 'text-amber-700' : 'text-[#1d6233]'}`}>
               {daysToHarvest}{' '}
               <span className="text-sm font-normal text-stone-400">วัน</span>
             </p>
           </div>
         </div>
 
-        {/* Harvest readiness meter */}
         <div className="mt-3">
           <div className="flex items-center justify-between mb-1.5">
             <p className="text-xs text-stone-500 font-medium">ความพร้อมในการเก็บเกี่ยว</p>
-            <p className="text-xs font-black text-green-700">{yield_.harvest_readiness_pct}%</p>
+            <p className="text-xs font-black text-[#1d6233]">{yield_.harvest_readiness_pct}%</p>
           </div>
-          <div className="h-3 bg-stone-100 rounded-full overflow-hidden">
+          <div className="h-3 bg-[#e9f6eb] rounded-full overflow-hidden">
+            {/* REDESIGN: Sinbad → Green Pea harvest readiness gradient */}
             <div
-              className="h-full rounded-full bg-gradient-to-r from-green-400 to-green-600"
+              className="h-full rounded-full bg-gradient-to-r from-[#abd8c8] to-[#1d6233]"
               style={{ width: `${yield_.harvest_readiness_pct}%` }}
             />
           </div>
@@ -241,12 +235,12 @@ export function YieldSummarySection({ yield_ }: Props) {
         </div>
       </div>
 
-      {/* ── 4. Yield trend chart ───────────────────── */}
-      <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-4">
+      {/* ── 4. Yield trend chart — REDESIGN: Surf Crest border */}
+      <div className="bg-white rounded-2xl shadow-sm border border-[#d2e5d3] p-4">
         <div className="flex items-center justify-between mb-1">
           <p className="text-sm font-black text-stone-900">แนวโน้มผลผลิต</p>
           <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold ${
-            trendUp ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+            trendUp ? 'bg-[#d2e5d3] text-[#1d6233]' : 'bg-red-100 text-red-700'
           }`}>
             {trendUp ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
             <span>{trendUp ? '+' : ''}{yield_.trend_pct}%</span>
@@ -256,15 +250,13 @@ export function YieldSummarySection({ yield_ }: Props) {
 
         <Sparkline data={sparkKg} gradId="yield-full" />
 
-        {/* X-axis labels */}
         <div className="flex justify-between mt-1">
           {yield_.trend_data.map((d) => (
             <span key={d.label} className="text-[9px] text-stone-300 text-center flex-1">{d.label}</span>
           ))}
         </div>
 
-        {/* Min / max summary */}
-        <div className="flex items-center justify-between mt-3 pt-3 border-t border-stone-100">
+        <div className="flex items-center justify-between mt-3 pt-3 border-t border-[#d2e5d3]">
           <div>
             <p className="text-[10px] text-stone-400">ต่ำสุด (7 วัน)</p>
             <p className="text-xs font-bold text-stone-700">
@@ -273,31 +265,32 @@ export function YieldSummarySection({ yield_ }: Props) {
           </div>
           <div className="text-right">
             <p className="text-[10px] text-stone-400">สูงสุด (7 วัน)</p>
-            <p className="text-xs font-bold text-green-700">
+            <p className="text-xs font-bold text-[#1d6233]">
               {(Math.max(...sparkKg) / 1000).toFixed(1)} ตัน
             </p>
           </div>
         </div>
       </div>
 
-      {/* ── 5. Zone yield mini map ─────────────────── */}
-      <div className="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
+      {/* ── 5. Zone yield mini map — REDESIGN: Surf Crest border */}
+      <div className="bg-white rounded-2xl shadow-sm border border-[#d2e5d3] overflow-hidden">
         <div className="flex items-center justify-between px-4 pt-4 pb-2">
           <div>
             <p className="text-sm font-bold text-stone-900">แผนที่ผลผลิตรายแปลง</p>
             <p className="text-xs text-stone-400 mt-0.5">สีแสดงระดับผลผลิตในแต่ละแปลง</p>
           </div>
           <div className="flex items-center gap-2">
-            <LegendDot color="bg-green-600" label="สูง" />
+            <LegendDot color="bg-[#1d6233]" label="สูง" />
             <LegendDot color="bg-amber-500" label="กลาง" />
             <LegendDot color="bg-red-600" label="ต่ำ" />
           </div>
         </div>
         <MiniMapSVG mode="yield" showHotspots={false} className="h-36" />
         <div className="px-4 py-3">
+          {/* REDESIGN: Green Pea map button */}
           <button
             onClick={() => navigate('/map')}
-            className="w-full bg-green-700 text-white rounded-xl py-3 flex items-center justify-center gap-2 font-semibold text-sm active:bg-green-800"
+            className="w-full bg-[#1d6233] text-white rounded-xl py-3 flex items-center justify-center gap-2 font-semibold text-sm active:bg-[#16502a]"
           >
             <Map size={16} />
             เปิดแผนที่เต็มจอ
@@ -305,15 +298,15 @@ export function YieldSummarySection({ yield_ }: Props) {
         </div>
       </div>
 
-      {/* ── 6. AI insight recommendations ─────────── */}
-      <div className="rounded-2xl bg-gradient-to-br from-indigo-900 to-indigo-700 p-5 shadow-md">
+      {/* ── 6. AI insight recommendations — REDESIGN: Green Pea replaces indigo */}
+      <div className="rounded-2xl bg-[#1d6233] p-5 shadow-md">
         <div className="flex items-center gap-2.5 mb-4">
           <div className="w-9 h-9 rounded-xl bg-white/15 flex items-center justify-center shrink-0">
-            <BrainCircuit size={18} className="text-indigo-200" />
+            <BrainCircuit size={18} className="text-[#abd8c8]" />
           </div>
           <div>
             <p className="text-white text-sm font-black">AI แนะนำการจัดการผลผลิต</p>
-            <p className="text-indigo-300 text-[10px]">วิเคราะห์โดย AgriVision AI</p>
+            <p className="text-[#abd8c8] text-[10px]">วิเคราะห์โดย AgriVision AI</p>
           </div>
         </div>
 
@@ -323,7 +316,7 @@ export function YieldSummarySection({ yield_ }: Props) {
             return (
               <div key={i} className={`flex items-start gap-2.5 ${bg} rounded-xl px-3 py-2.5`}>
                 <span className="text-sm shrink-0 mt-0.5">{icon}</span>
-                <p className="text-indigo-100 text-xs leading-relaxed">{insight}</p>
+                <p className="text-[#e9f6eb] text-xs leading-relaxed">{insight}</p>
               </div>
             );
           })}
@@ -351,12 +344,11 @@ export function CompactYieldCard({ yield_ }: Props) {
 
   return (
     <div className="px-4">
-      <div className="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
+      {/* REDESIGN: Surf Crest border */}
+      <div className="bg-white rounded-2xl shadow-sm border border-[#d2e5d3] overflow-hidden">
 
-        {/* Metrics row */}
         <div className="p-4 pb-2">
           <div className="flex items-start justify-between gap-3">
-            {/* Left: yield + trend */}
             <div className="flex-1">
               <p className="text-stone-400 text-[11px] font-medium">คาดการณ์ผลผลิต</p>
               <div className="flex items-end gap-1 mt-0.5">
@@ -364,17 +356,16 @@ export function CompactYieldCard({ yield_ }: Props) {
                 <span className="text-stone-400 text-sm mb-1">ตัน</span>
               </div>
               <div className={`mt-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold ${
-                trendUp ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                trendUp ? 'bg-[#d2e5d3] text-[#1d6233]' : 'bg-red-100 text-red-700'
               }`}>
                 {trendUp ? <TrendingUp size={9} /> : <TrendingDown size={9} />}
                 <span>{trendUp ? '+' : ''}{yield_.trend_pct}% จากสัปดาห์ที่แล้ว</span>
               </div>
             </div>
 
-            {/* Right: grade + readiness */}
             <div className="text-right shrink-0">
               <div className={`text-5xl font-black leading-none ${
-                yield_.quality_grade === 'A' ? 'text-green-600' :
+                yield_.quality_grade === 'A' ? 'text-[#1d6233]' :
                 yield_.quality_grade === 'B' ? 'text-amber-500' :
                 'text-red-500'
               }`}>
@@ -385,26 +376,24 @@ export function CompactYieldCard({ yield_ }: Props) {
             </div>
           </div>
 
-          {/* Harvest readiness bar */}
-          <div className="mt-3 h-2 bg-stone-100 rounded-full overflow-hidden">
+          {/* REDESIGN: Sinbad → Green Pea harvest bar */}
+          <div className="mt-3 h-2 bg-[#e9f6eb] rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-green-400 to-green-500 rounded-full"
+              className="h-full bg-gradient-to-r from-[#abd8c8] to-[#1d6233] rounded-full"
               style={{ width: `${yield_.harvest_readiness_pct}%` }}
             />
           </div>
         </div>
 
-        {/* Mini sparkline */}
         <div className="px-4 pt-2 pb-1">
           <Sparkline data={sparkKg} gradId="yield-compact" />
         </div>
 
-        {/* Zone level bars */}
         <div className="px-4 pb-3 flex gap-2 mt-1">
           {yield_.zone_yields.map((z) => (
             <div key={z.zone_id} className="flex-1 flex flex-col gap-1">
               <div className={`h-1.5 rounded-full ${
-                z.yield_level === 'high' ? 'bg-green-500' :
+                z.yield_level === 'high' ? 'bg-[#1d6233]' :
                 z.yield_level === 'medium' ? 'bg-amber-400' :
                 'bg-red-400'
               }`} />
@@ -415,11 +404,11 @@ export function CompactYieldCard({ yield_ }: Props) {
           ))}
         </div>
 
-        {/* CTA */}
-        <div className="border-t border-stone-100">
+        {/* REDESIGN: Surf Crest divider, Green Pea CTA text */}
+        <div className="border-t border-[#d2e5d3]">
           <button
             onClick={() => navigate('/yield')}
-            className="w-full flex items-center justify-center gap-2 text-green-700 font-semibold text-sm py-3.5 active:bg-stone-50"
+            className="w-full flex items-center justify-center gap-2 text-[#1d6233] font-semibold text-sm py-3.5 active:bg-[#e9f6eb]"
           >
             ดูวิเคราะห์ผลผลิตเต็มรูปแบบ
             <ChevronRight size={16} />
@@ -430,7 +419,6 @@ export function CompactYieldCard({ yield_ }: Props) {
   );
 }
 
-// ── Internal helpers ─────────────────────────────────────────
 function LegendDot({ color, label }: { color: string; label: string }) {
   return (
     <div className="flex items-center gap-1">

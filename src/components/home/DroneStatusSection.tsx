@@ -5,16 +5,16 @@ interface Props {
 }
 
 const statusConfig = {
-  completed: { label: 'สแกนเสร็จสมบูรณ์', bg: 'bg-green-100 text-green-700', emoji: '✅' },
+  completed: { label: 'สแกนเสร็จสมบูรณ์', bg: 'bg-[#d2e5d3] text-[#1d6233]', emoji: '✅' },
   uploading: { label: 'กำลังอัปโหลดข้อมูล', bg: 'bg-amber-100 text-amber-700', emoji: '☁️' },
   in_progress: { label: 'กำลังบิน', bg: 'bg-blue-100 text-blue-700', emoji: '🚁' },
   scheduled: { label: 'รอการสแกน', bg: 'bg-stone-100 text-stone-600', emoji: '🕐' },
 };
 
 const signalConfig = {
-  strong: { label: 'แรงมาก', color: 'text-green-600', bars: 3 },
-  medium: { label: 'ปานกลาง', color: 'text-amber-600', bars: 2 },
-  weak: { label: 'อ่อน', color: 'text-red-600', bars: 1 },
+  strong: { label: 'แรงมาก', color: 'text-[#1d6233]', barBg: 'bg-[#1d6233]', bars: 3 },
+  medium: { label: 'ปานกลาง', color: 'text-amber-600', barBg: 'bg-amber-600', bars: 2 },
+  weak: { label: 'อ่อน', color: 'text-red-600', barBg: 'bg-red-600', bars: 1 },
 };
 
 function formatCompletedAt(iso: string | null): string {
@@ -32,10 +32,11 @@ export function DroneStatusSection({ drone }: Props) {
 
   return (
     <div className="px-4">
-      <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-4">
-        {/* Drone header */}
+      {/* REDESIGN: Surf Crest border from palette */}
+      <div className="bg-white rounded-2xl shadow-sm border border-[#d2e5d3] p-4">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-14 h-14 rounded-2xl bg-green-50 flex items-center justify-center text-3xl shrink-0">
+          {/* REDESIGN: Panache drone icon background */}
+          <div className="w-14 h-14 rounded-2xl bg-[#e9f6eb] flex items-center justify-center text-3xl shrink-0">
             🛸
           </div>
           <div className="flex-1 min-w-0">
@@ -50,29 +51,28 @@ export function DroneStatusSection({ drone }: Props) {
           </span>
         </div>
 
-        {/* Coverage progress */}
         <div className="mb-4">
           <div className="flex justify-between mb-1.5">
             <p className="text-xs font-semibold text-stone-600">ครอบคลุมพื้นที่</p>
             <p className="text-xs font-bold text-stone-900">{drone.coverage_pct}%</p>
           </div>
-          <div className="h-2.5 bg-stone-100 rounded-full overflow-hidden">
+          <div className="h-2.5 bg-[#e9f6eb] rounded-full overflow-hidden">
+            {/* REDESIGN: Green Pea → Sinbad coverage gradient */}
             <div
-              className="h-full rounded-full bg-gradient-to-r from-green-600 to-green-400 transition-all"
+              className="h-full rounded-full bg-gradient-to-r from-[#1d6233] to-[#abd8c8] transition-all"
               style={{ width: `${drone.coverage_pct}%` }}
             />
           </div>
           <p className="text-[10px] text-stone-400 mt-1">{drone.last_scan_area_rai} ไร่ จาก 24.5 ไร่</p>
         </div>
 
-        {/* Upload progress (only when uploading) */}
         {drone.status === 'uploading' && (
           <div className="mb-4">
             <div className="flex justify-between mb-1.5">
               <p className="text-xs font-semibold text-stone-600">อัปโหลดข้อมูล</p>
               <p className="text-xs font-bold text-amber-700">{drone.upload_pct}%</p>
             </div>
-            <div className="h-2.5 bg-stone-100 rounded-full overflow-hidden">
+            <div className="h-2.5 bg-[#e9f6eb] rounded-full overflow-hidden">
               <div
                 className="h-full rounded-full bg-gradient-to-r from-amber-500 to-amber-400 transition-all"
                 style={{ width: `${drone.upload_pct}%` }}
@@ -81,10 +81,9 @@ export function DroneStatusSection({ drone }: Props) {
           </div>
         )}
 
-        {/* Indicators */}
+        {/* REDESIGN: Panache indicator blocks */}
         <div className="grid grid-cols-3 gap-2">
-          {/* Battery */}
-          <div className="bg-stone-50 rounded-xl p-3 text-center">
+          <div className="bg-[#e9f6eb] rounded-xl p-3 text-center">
             <p className="text-xl mb-1">
               {drone.battery_pct >= 60 ? '🔋' : drone.battery_pct >= 30 ? '🪫' : '⚠️'}
             </p>
@@ -92,13 +91,12 @@ export function DroneStatusSection({ drone }: Props) {
             <p className="text-[10px] text-stone-400 mt-0.5">แบตเตอรี่</p>
           </div>
 
-          {/* Signal */}
-          <div className="bg-stone-50 rounded-xl p-3 text-center">
+          <div className="bg-[#e9f6eb] rounded-xl p-3 text-center">
             <div className="flex items-end justify-center gap-0.5 h-6 mb-1">
               {[1, 2, 3].map((bar) => (
                 <div
                   key={bar}
-                  className={`w-2 rounded-sm ${bar <= sig.bars ? sig.color.replace('text-', 'bg-') : 'bg-stone-200'}`}
+                  className={`w-2 rounded-sm ${bar <= sig.bars ? sig.barBg : 'bg-[#d2e5d3]'}`}
                   style={{ height: `${bar * 7}px` }}
                 />
               ))}
@@ -107,8 +105,7 @@ export function DroneStatusSection({ drone }: Props) {
             <p className="text-[10px] text-stone-400 mt-0.5">สัญญาณ</p>
           </div>
 
-          {/* Scans done */}
-          <div className="bg-stone-50 rounded-xl p-3 text-center">
+          <div className="bg-[#e9f6eb] rounded-xl p-3 text-center">
             <p className="text-xl mb-1">📸</p>
             <p className="text-sm font-bold text-stone-900">342</p>
             <p className="text-[10px] text-stone-400 mt-0.5">ภาพที่ถ่าย</p>

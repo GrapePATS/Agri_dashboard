@@ -10,13 +10,14 @@ export function BarChart({ data, height = 120 }: BarChartProps) {
 
   return (
     <div className="w-full">
+      {/* REDESIGN: Surf Crest bar color from palette */}
       <div className="flex items-end gap-1.5" style={{ height }}>
         {data.map((point, i) => {
           const barH = Math.round((point.detections / maxDetections) * (height - 24));
           return (
             <div key={i} className="flex-1 flex flex-col items-center justify-end gap-1 relative">
               <div
-                className="w-full bg-green-100 rounded-t-md relative group"
+                className="w-full bg-[#d2e5d3] rounded-t-md relative group"
                 style={{ height: Math.max(barH, 4) }}
               >
                 <div
@@ -40,7 +41,8 @@ export function BarChart({ data, height = 120 }: BarChartProps) {
 
       <div className="flex items-center gap-4 mt-3">
         <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded bg-green-200" />
+          {/* REDESIGN: Surf Crest legend dot */}
+          <div className="w-3 h-3 rounded bg-[#d2e5d3]" />
           <span className="text-xs text-stone-500">การพบ</span>
         </div>
       </div>
@@ -69,17 +71,18 @@ export function HealthTrendLine({ data }: { data: ChartDataPoint[] }) {
   const areaD = `${pathD} L ${points[points.length - 1].x} ${h - pad} L ${points[0].x} ${h - pad} Z`;
 
   return (
+    // REDESIGN: Green Pea (#1d6233) line color from palette
     <svg width="100%" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" className="block">
       <defs>
         <linearGradient id="scoreGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#16a34a" stopOpacity="0.25" />
-          <stop offset="100%" stopColor="#16a34a" stopOpacity="0.02" />
+          <stop offset="0%" stopColor="#1d6233" stopOpacity="0.25" />
+          <stop offset="100%" stopColor="#1d6233" stopOpacity="0.02" />
         </linearGradient>
       </defs>
       <path d={areaD} fill="url(#scoreGrad)" />
-      <path d={pathD} fill="none" stroke="#16a34a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d={pathD} fill="none" stroke="#1d6233" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
       {points.map((p, i) => (
-        <circle key={i} cx={p.x} cy={p.y} r="3" fill="#16a34a" stroke="white" strokeWidth="1.5" />
+        <circle key={i} cx={p.x} cy={p.y} r="3" fill="#1d6233" stroke="white" strokeWidth="1.5" />
       ))}
     </svg>
   );

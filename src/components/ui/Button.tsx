@@ -11,10 +11,11 @@ interface ButtonProps {
   type?: 'button' | 'submit' | 'reset';
 }
 
+// REDESIGN: Primary uses Green Pea (#1d6233) from palette
 const variantClasses: Record<string, string> = {
-  primary: 'bg-green-600 hover:bg-green-700 active:bg-green-800 text-white shadow-sm',
-  secondary: 'bg-stone-100 hover:bg-stone-200 active:bg-stone-300 text-stone-800',
-  ghost: 'hover:bg-stone-100 active:bg-stone-200 text-stone-700',
+  primary: 'bg-[#1d6233] hover:bg-[#16502a] active:bg-[#123f21] text-white shadow-sm',
+  secondary: 'bg-[#e9f6eb] hover:bg-[#d2e5d3] active:bg-[#abd8c8] text-[#1d6233]',
+  ghost: 'hover:bg-[#e9f6eb] active:bg-[#d2e5d3] text-stone-700',
   danger: 'bg-red-600 hover:bg-red-700 active:bg-red-800 text-white shadow-sm',
 };
 

@@ -62,23 +62,21 @@ export function Sidebar({ isOpen, onClose, activeFarm }: SidebarProps) {
 
   return (
     <>
-      {/* Backdrop */}
       <div
-        className={`fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 ${
+        className={`fixed inset-0 bg-black/50 z-50 transition-opacity duration-300 ${
           isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
         onClick={onClose}
       />
 
-      {/* Drawer */}
       <div
-        className={`fixed top-0 left-0 h-full z-50 bg-white shadow-2xl flex flex-col
+        className={`fixed top-0 left-0 h-full z-[60] bg-white shadow-2xl flex flex-col
           transform transition-transform duration-300 ease-out
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}
         style={{ width: '72vw', maxWidth: '288px' }}
       >
-        {/* ── Sidebar header ─────────────────────── */}
-        <div className="bg-gradient-to-br from-green-900 to-green-700 px-5 pt-12 pb-5 shrink-0">
+        {/* REDESIGN: Solid Green Pea header — LINE-like flat color */}
+        <div className="bg-[#1d6233] px-5 pt-12 pb-5 shrink-0">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-white/15 flex items-center justify-center text-lg shrink-0">
@@ -86,7 +84,8 @@ export function Sidebar({ isOpen, onClose, activeFarm }: SidebarProps) {
               </div>
               <div>
                 <p className="text-white font-black text-sm leading-tight">AgriVision AI</p>
-                <p className="text-green-300 text-[10px]">ระบบเกษตรอัจฉริยะ</p>
+                {/* REDESIGN: Sinbad subtitle color */}
+                <p className="text-[#abd8c8] text-[10px]">ระบบเกษตรอัจฉริยะ</p>
               </div>
             </div>
             <button
@@ -97,21 +96,21 @@ export function Sidebar({ isOpen, onClose, activeFarm }: SidebarProps) {
             </button>
           </div>
 
-          {/* Active farm chip */}
           {activeFarm && (
             <div className="bg-white/15 rounded-xl px-3 py-2.5">
-              <p className="text-green-300 text-[10px] font-semibold uppercase tracking-wide mb-0.5">
+              {/* REDESIGN: Sinbad label color on dark header */}
+              <p className="text-[#abd8c8] text-[10px] font-semibold uppercase tracking-wide mb-0.5">
                 ฟาร์มที่ใช้งานอยู่
               </p>
               <p className="text-white text-sm font-bold leading-tight">{activeFarm.farm_name}</p>
-              <p className="text-green-300 text-[10px] mt-0.5">
+              <p className="text-[#abd8c8] text-[10px] mt-0.5">
                 {activeFarm.total_area_rai} ไร่ · {activeFarm.zones.length} แปลง
               </p>
             </div>
           )}
         </div>
 
-        {/* ── Nav items ──────────────────────────── */}
+        {/* REDESIGN: Panache active bg, Surf Crest active icon bg, Green Pea active text */}
         <div className="flex-1 overflow-y-auto py-2">
           {NAV_GROUPS.map(({ label, items }) => (
             <div key={label} className="mb-1">
@@ -126,32 +125,31 @@ export function Sidebar({ isOpen, onClose, activeFarm }: SidebarProps) {
                     onClick={() => handleNav(path)}
                     className={`w-full flex items-center gap-3 px-4 py-3 min-h-[52px] transition-colors relative ${
                       active
-                        ? 'bg-green-50'
-                        : 'hover:bg-stone-50 active:bg-stone-100'
+                        ? 'bg-[#e9f6eb]'
+                        : 'hover:bg-[#e9f6eb] active:bg-[#d2e5d3]'
                     }`}
                   >
-                    {/* Active left bar */}
                     {active && (
-                      <div className="absolute left-0 top-2 bottom-2 w-1 bg-green-600 rounded-r-full" />
+                      <div className="absolute left-0 top-2 bottom-2 w-1 bg-[#1d6233] rounded-r-full" />
                     )}
 
                     <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
-                      active ? 'bg-green-100' : 'bg-stone-100'
+                      active ? 'bg-[#d2e5d3]' : 'bg-stone-100'
                     }`}>
                       <Icon
                         size={17}
-                        className={active ? 'text-green-700' : 'text-stone-500'}
+                        className={active ? 'text-[#1d6233]' : 'text-stone-500'}
                         strokeWidth={active ? 2.2 : 1.8}
                       />
                     </div>
 
                     <span className={`text-sm font-semibold flex-1 text-left ${
-                      active ? 'text-green-800' : 'text-stone-700'
+                      active ? 'text-[#1d6233]' : 'text-stone-700'
                     }`}>
                       {itemLabel}
                     </span>
 
-                    {active && <ChevronRight size={14} className="text-green-400 shrink-0" />}
+                    {active && <ChevronRight size={14} className="text-[#abd8c8] shrink-0" />}
                   </button>
                 );
               })}
@@ -159,8 +157,8 @@ export function Sidebar({ isOpen, onClose, activeFarm }: SidebarProps) {
           ))}
         </div>
 
-        {/* ── Footer ─────────────────────────────── */}
-        <div className="border-t border-stone-100 px-5 py-4 shrink-0">
+        {/* REDESIGN: Surf Crest top border on footer */}
+        <div className="border-t border-[#d2e5d3] px-5 py-4 shrink-0">
           <p className="text-[10px] text-stone-400 text-center leading-relaxed">
             AgriVision AI v1.0
           </p>

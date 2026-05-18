@@ -1,5 +1,4 @@
 import { Routes, Route } from 'react-router-dom';
-import { BottomNav } from './components/BottomNav';
 import { HomePage } from './pages/HomePage';
 import { AIPage } from './pages/AIPage';
 import { MapPage } from './pages/MapPage';
@@ -11,7 +10,8 @@ import { YieldPage } from './pages/YieldPage';
 
 function AppShell() {
   return (
-    <div className="w-full max-w-[430px] mx-auto min-h-screen bg-stone-50 relative">
+    // REDESIGN: Panache page background — light green tint from palette
+    <div className="w-full max-w-[430px] mx-auto min-h-screen bg-[#e9f6eb] relative">
       <main>
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -24,7 +24,6 @@ function AppShell() {
           <Route path="/tasks" element={<TasksPage />} />
         </Routes>
       </main>
-      <BottomNav />
     </div>
   );
 }

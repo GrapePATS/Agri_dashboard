@@ -25,9 +25,10 @@ export function DetectionsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-stone-50 pb-8">
-      {/* Header */}
-      <div className="bg-gradient-to-br from-green-900 to-green-700 px-4 pt-12 pb-5">
+    // REDESIGN: Panache page background
+    <div className="min-h-screen bg-[#e9f6eb] pb-8">
+      {/* REDESIGN: Solid Green Pea header */}
+      <div className="bg-[#1d6233] px-4 pt-12 pb-5">
         <div className="flex items-center gap-3 mb-4">
           <button
             onClick={() => navigate('/')}
@@ -37,11 +38,12 @@ export function DetectionsPage() {
           </button>
           <div>
             <h1 className="text-white text-xl font-black">ผลการตรวจพบ</h1>
-            <p className="text-green-300 text-xs mt-0.5">โรค วัชพืช และแมลงศัตรูพืช</p>
+            {/* REDESIGN: Sinbad subtitle */}
+            <p className="text-[#abd8c8] text-xs mt-0.5">โรค วัชพืช และแมลงศัตรูพืช</p>
           </div>
         </div>
 
-        {/* Filter tabs */}
+        {/* REDESIGN: White active tab + Green Pea text, Sinbad inactive */}
         <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
           {filterTabs.map(({ key, label, emoji }) => (
             <button
@@ -49,7 +51,7 @@ export function DetectionsPage() {
               onClick={() => setActiveFilter(key)}
               className={`shrink-0 flex items-center gap-1.5 px-4 min-h-[40px] rounded-xl text-sm font-bold transition-all ${
                 activeFilter === key
-                  ? 'bg-white text-green-800'
+                  ? 'bg-white text-[#1d6233]'
                   : 'bg-white/15 text-white border border-white/20'
               }`}
             >
@@ -70,7 +72,7 @@ export function DetectionsPage() {
         {isError && (
           <div className="text-center py-10">
             <p className="text-stone-500 text-sm mb-3">โหลดข้อมูลไม่สำเร็จ</p>
-            <button onClick={() => refetch()} className="text-green-700 text-sm font-semibold">
+            <button onClick={() => refetch()} className="text-[#1d6233] text-sm font-semibold">
               ลองอีกครั้ง
             </button>
           </div>
@@ -90,9 +92,10 @@ export function DetectionsPage() {
               <p className="text-xs text-stone-500 font-semibold">
                 พบ {data.total} รายการ
               </p>
+              {/* REDESIGN: Green Pea + Panache map shortcut */}
               <button
                 onClick={() => navigate('/map')}
-                className="text-xs text-green-700 font-bold px-3 py-1.5 bg-green-50 rounded-xl"
+                className="text-xs text-[#1d6233] font-bold px-3 py-1.5 bg-white border border-[#d2e5d3] rounded-xl"
               >
                 🗺️ ดูบนแผนที่
               </button>

@@ -9,9 +9,10 @@ export function YieldPage() {
   const { data: yieldData, isLoading } = useYieldSummary();
 
   return (
-    <div className="min-h-screen bg-stone-50 pb-10">
-      {/* Header */}
-      <div className="bg-gradient-to-br from-green-900 to-green-700 px-4 pt-12 pb-5">
+    // REDESIGN: Panache page background
+    <div className="min-h-screen bg-[#e9f6eb] pb-10">
+      {/* REDESIGN: Solid Green Pea header */}
+      <div className="bg-[#1d6233] px-4 pt-12 pb-5">
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate(-1)}
@@ -21,12 +22,12 @@ export function YieldPage() {
           </button>
           <div>
             <h1 className="text-white text-xl font-black">วิเคราะห์ผลผลิต</h1>
-            <p className="text-green-300 text-xs mt-0.5">ภาพรวมและการคาดการณ์ผลผลิต</p>
+            {/* REDESIGN: Sinbad subtitle */}
+            <p className="text-[#abd8c8] text-xs mt-0.5">ภาพรวมและการคาดการณ์ผลผลิต</p>
           </div>
         </div>
       </div>
 
-      {/* Content */}
       <div className="pt-4">
         {isLoading && (
           <div className="px-4 space-y-3">

@@ -20,6 +20,7 @@ const typeThai: Record<string, string> = {
   weed: 'วัชพืช',
 };
 
+// REDESIGN: keep red/amber/blue semantic severity; Surf Crest border on cards
 const severityConfig: Record<string, { border: string; bg: string; badge: string; badgeText: string; label: string }> = {
   critical: {
     border: 'border-l-red-500',
@@ -69,7 +70,7 @@ export function SmartAlertsSection({ detections, showHeader = true, compact = fa
           </div>
           <button
             onClick={() => navigate('/detections')}
-            className="text-green-700 text-sm font-semibold flex items-center gap-0.5"
+            className="text-[#1d6233] text-sm font-semibold flex items-center gap-0.5"
           >
             ดูทั้งหมด <ChevronRight size={14} />
           </button>
@@ -83,7 +84,7 @@ export function SmartAlertsSection({ detections, showHeader = true, compact = fa
             <button
               key={d.detection_id}
               onClick={() => navigate(`/detections/${d.detection_id}`)}
-              className={`w-full text-left bg-white rounded-xl border-l-4 ${cfg.border} shadow-sm flex items-center gap-3 active:opacity-80 ${compact ? 'p-3' : 'p-4 rounded-2xl'}`}
+              className={`w-full text-left bg-white rounded-xl border-l-4 ${cfg.border} border border-[#d2e5d3] shadow-sm flex items-center gap-3 active:opacity-80 ${compact ? 'p-3' : 'p-4 rounded-2xl'}`}
             >
               <div className={`rounded-xl ${cfg.bg} flex items-center justify-center shrink-0 ${compact ? 'w-9 h-9 text-lg' : 'w-12 h-12 text-2xl'}`}>
                 {typeEmoji[d.type]}
@@ -112,19 +113,20 @@ export function SmartAlertsSection({ detections, showHeader = true, compact = fa
         })}
 
         {urgent.length === 0 && (
-          <div className={`bg-green-50 border border-green-200 rounded-2xl text-center ${compact ? 'p-4' : 'p-5'}`}>
+          // REDESIGN: Panache bg + Surf Crest border on empty state
+          <div className={`bg-[#e9f6eb] border border-[#d2e5d3] rounded-2xl text-center ${compact ? 'p-4' : 'p-5'}`}>
             <span className={compact ? 'text-2xl' : 'text-3xl'}>✅</span>
-            <p className="text-green-700 font-bold mt-1.5">ไม่มีการแจ้งเตือนเร่งด่วน</p>
-            <p className="text-green-600 text-xs mt-0.5">ฟาร์มอยู่ในสภาวะปกติ</p>
+            <p className="text-[#1d6233] font-bold mt-1.5">ไม่มีการแจ้งเตือนเร่งด่วน</p>
+            <p className="text-[#1d6233] text-xs mt-0.5 opacity-70">ฟาร์มอยู่ในสภาวะปกติ</p>
           </div>
         )}
 
-        {/* AI Recommendation Banner */}
-        <div className={`bg-gradient-to-r from-green-700 to-green-600 rounded-2xl flex items-center gap-3 ${compact ? 'p-3' : 'p-4 items-start'}`}>
+        {/* REDESIGN: Solid Green Pea AI banner — LINE-like flat color */}
+        <div className={`bg-[#1d6233] rounded-2xl flex items-center gap-3 ${compact ? 'p-3' : 'p-4 items-start'}`}>
           <span className={`shrink-0 ${compact ? 'text-base' : 'text-xl'}`}>🤖</span>
           <div className="min-w-0">
             {!compact && (
-              <p className="text-green-100 text-[10px] font-semibold uppercase tracking-wide mb-1">
+              <p className="text-[#abd8c8] text-[10px] font-semibold uppercase tracking-wide mb-1">
                 คำแนะนำจาก AI
               </p>
             )}

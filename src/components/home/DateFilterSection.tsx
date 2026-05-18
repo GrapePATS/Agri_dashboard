@@ -24,14 +24,16 @@ export function DateFilterSection({ scans }: Props) {
 
   return (
     <div className="px-4">
-      <div className="bg-white rounded-2xl shadow-sm border border-stone-100 p-4">
+      {/* REDESIGN: Surf Crest border from palette */}
+      <div className="bg-white rounded-2xl shadow-sm border border-[#d2e5d3] p-4">
         <div className="flex items-center gap-2 mb-3">
-          <Clock size={16} className="text-green-700" />
+          {/* REDESIGN: Green Pea clock icon */}
+          <Clock size={16} className="text-[#1d6233]" />
           <p className="text-sm font-bold text-stone-900">ผลการวิเคราะห์ล่าสุด</p>
         </div>
 
-        {/* Current scan display */}
-        <div className="bg-stone-50 border border-stone-200 rounded-xl px-4 py-3 mb-3 flex items-center justify-between min-h-[52px]">
+        {/* REDESIGN: Panache bg + Surf Crest border on date display */}
+        <div className="bg-[#e9f6eb] border border-[#d2e5d3] rounded-xl px-4 py-3 mb-3 flex items-center justify-between min-h-[52px]">
           <div>
             <p className="text-[10px] text-stone-400 font-semibold uppercase tracking-wide mb-0.5">
               วันที่ตรวจสอบ
@@ -43,7 +45,6 @@ export function DateFilterSection({ scans }: Props) {
           <ChevronDown size={20} className="text-stone-400 shrink-0 ml-2" />
         </div>
 
-        {/* Scan history chips */}
         <div>
           <p className="text-[10px] text-stone-400 font-semibold uppercase tracking-wide mb-2">
             เลือกช่วงเวลา
@@ -53,10 +54,11 @@ export function DateFilterSection({ scans }: Props) {
               <button
                 key={scan.scan_id}
                 onClick={() => setSelected(scan.scan_id)}
+                // REDESIGN: Green Pea active chip, Surf Crest inactive border
                 className={`shrink-0 min-h-[40px] px-4 rounded-xl text-sm font-semibold border transition-all ${
                   selected === scan.scan_id
-                    ? 'bg-green-700 text-white border-green-700'
-                    : 'bg-white text-stone-600 border-stone-200'
+                    ? 'bg-[#1d6233] text-white border-[#1d6233]'
+                    : 'bg-white text-stone-600 border-[#d2e5d3]'
                 }`}
               >
                 {scan.label}

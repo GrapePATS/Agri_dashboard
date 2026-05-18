@@ -18,9 +18,10 @@ export function ReportsPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-stone-50 pb-10">
-      {/* Header */}
-      <div className="bg-gradient-to-br from-indigo-900 to-indigo-700 px-4 pt-12 pb-5">
+    // REDESIGN: Panache page background
+    <div className="min-h-screen bg-[#e9f6eb] pb-10">
+      {/* REDESIGN: Solid Green Pea header (was indigo) */}
+      <div className="bg-[#1d6233] px-4 pt-12 pb-5">
         <div className="flex items-center gap-3 mb-4">
           <button
             onClick={() => navigate('/')}
@@ -30,14 +31,15 @@ export function ReportsPage() {
           </button>
           <div className="flex-1">
             <h1 className="text-white text-xl font-black">รายงานฟาร์ม</h1>
-            <p className="text-indigo-300 text-xs mt-0.5">สรุปสภาพฟาร์มและผลผลิต</p>
+            {/* REDESIGN: Sinbad subtitle */}
+            <p className="text-[#abd8c8] text-xs mt-0.5">สรุปสภาพฟาร์มและผลผลิต</p>
           </div>
           <button className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center active:bg-white/25">
             <Share2 size={18} className="text-white" />
           </button>
         </div>
 
-        {/* Period selector */}
+        {/* REDESIGN: White active tab + Green Pea text */}
         <div className="flex gap-2">
           {periods.map(({ key, label, emoji }) => (
             <button
@@ -45,7 +47,7 @@ export function ReportsPage() {
               onClick={() => setPeriod(key)}
               className={`flex-1 flex items-center justify-center gap-1.5 min-h-[44px] rounded-xl text-sm font-bold transition-all ${
                 period === key
-                  ? 'bg-white text-indigo-800'
+                  ? 'bg-white text-[#1d6233]'
                   : 'bg-white/15 text-white border border-white/20'
               }`}
             >
@@ -73,25 +75,25 @@ export function ReportsPage() {
 
         {data && (
           <>
-            {/* AI Summary Card */}
-            <div className="bg-gradient-to-br from-indigo-700 to-purple-700 rounded-2xl p-5 shadow-md">
-              <p className="text-indigo-200 text-[10px] font-bold uppercase tracking-wide mb-2">
+            {/* AI Summary Card — REDESIGN: Green Pea solid (was indigo/purple) */}
+            <div className="bg-[#1d6233] rounded-2xl p-5 shadow-md">
+              <p className="text-[#abd8c8] text-[10px] font-bold uppercase tracking-wide mb-2">
                 🤖 สรุปจาก AI
               </p>
               <p className="text-white text-sm leading-relaxed">{data.summary}</p>
-              <p className="text-indigo-300 text-[10px] mt-3">
+              <p className="text-[#abd8c8] text-[10px] mt-3">
                 {data.date_range.from} — {data.date_range.to}
               </p>
             </div>
 
-            {/* Score + Detections */}
+            {/* Score + Detections — REDESIGN: Surf Crest borders */}
             <div className="grid grid-cols-2 gap-3">
-              <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-4">
+              <div className="bg-white rounded-2xl border border-[#d2e5d3] shadow-sm p-4">
                 <p className="text-xs text-stone-500 mb-1">คะแนนเฉลี่ย</p>
                 <p className="text-4xl font-black text-stone-900">
                   {Math.round(data.health_score_avg * 100)}
                 </p>
-                <div className={`flex items-center gap-1 mt-2 ${data.health_score_change >= 0 ? 'text-green-600' : 'text-red-500'}`}>
+                <div className={`flex items-center gap-1 mt-2 ${data.health_score_change >= 0 ? 'text-[#1d6233]' : 'text-red-500'}`}>
                   <TrendingDown size={14} className={data.health_score_change >= 0 ? 'rotate-180' : ''} />
                   <span className="text-sm font-bold">
                     {data.health_score_change >= 0 ? '+' : ''}
@@ -99,7 +101,7 @@ export function ReportsPage() {
                   </span>
                 </div>
               </div>
-              <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-4">
+              <div className="bg-white rounded-2xl border border-[#d2e5d3] shadow-sm p-4">
                 <p className="text-xs text-stone-500 mb-1">พบปัญหาทั้งหมด</p>
                 <p className="text-4xl font-black text-stone-900">{data.total_detections}</p>
                 <p className="text-xs text-stone-400 mt-2">รายการ</p>
@@ -107,14 +109,14 @@ export function ReportsPage() {
             </div>
 
             {/* By type */}
-            <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-4">
+            <div className="bg-white rounded-2xl border border-[#d2e5d3] shadow-sm p-4">
               <p className="text-xs font-bold text-stone-500 uppercase tracking-wide mb-3">
                 แยกตามประเภท
               </p>
               <div className="grid grid-cols-3 gap-2">
                 {[
                   { Icon: Microscope, label: 'โรคพืช', count: data.detections_by_type.disease, bg: 'bg-red-50', color: 'text-red-600' },
-                  { Icon: Leaf, label: 'วัชพืช', count: data.detections_by_type.weed, bg: 'bg-green-50', color: 'text-green-600' },
+                  { Icon: Leaf, label: 'วัชพืช', count: data.detections_by_type.weed, bg: 'bg-[#e9f6eb]', color: 'text-[#1d6233]' },
                   { Icon: Bug, label: 'แมลง', count: data.detections_by_type.pest, bg: 'bg-amber-50', color: 'text-amber-600' },
                 ].map(({ Icon, label, count, bg, color }) => (
                   <div key={label} className={`text-center rounded-xl p-3 ${bg}`}>
@@ -127,18 +129,19 @@ export function ReportsPage() {
             </div>
 
             {/* Health trend chart */}
-            <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-4">
+            <div className="bg-white rounded-2xl border border-[#d2e5d3] shadow-sm p-4">
               <p className="text-xs font-bold text-stone-500 uppercase tracking-wide mb-3">
                 แนวโน้มสุขภาพ
               </p>
               <HealthTrendLine data={data.chart_data} />
+              {/* REDESIGN: Sinbad detection bars */}
               <div className="flex items-end gap-1.5 mt-3" style={{ height: 56 }}>
                 {data.chart_data.map((d, i) => {
                   const max = Math.max(...data.chart_data.map((x) => x.detections), 1);
                   const h = Math.max(Math.round((d.detections / max) * 44), 4);
                   return (
                     <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
-                      <div className="w-full bg-amber-300 rounded-t-sm" style={{ height: h }} />
+                      <div className="w-full bg-[#abd8c8] rounded-t-sm" style={{ height: h }} />
                       <span className="text-[9px] text-stone-400 text-center">{d.label}</span>
                     </div>
                   );
@@ -148,9 +151,10 @@ export function ReportsPage() {
             </div>
 
             {/* Yield estimate */}
-            <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-4">
+            <div className="bg-white rounded-2xl border border-[#d2e5d3] shadow-sm p-4">
               <div className="flex items-center gap-2 mb-3">
-                <Sprout size={16} className="text-green-600" />
+                {/* REDESIGN: Green Pea Sprout icon */}
+                <Sprout size={16} className="text-[#1d6233]" />
                 <p className="text-xs font-bold text-stone-500 uppercase tracking-wide">
                   ประมาณการผลผลิต
                 </p>
@@ -160,21 +164,22 @@ export function ReportsPage() {
                   {(data.yield_estimate_kg / 1000).toFixed(1)}
                 </p>
                 <p className="text-stone-500 text-sm mb-1">ตัน</p>
-                <div className={`ml-auto text-xs font-bold px-3 py-1.5 rounded-full ${data.yield_confidence >= 0.7 ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
+                <div className={`ml-auto text-xs font-bold px-3 py-1.5 rounded-full ${data.yield_confidence >= 0.7 ? 'bg-[#d2e5d3] text-[#1d6233]' : 'bg-amber-100 text-amber-700'}`}>
                   เชื่อมั่น {Math.round(data.yield_confidence * 100)}%
                 </div>
               </div>
             </div>
 
             {/* Recommendations */}
-            <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-4">
+            <div className="bg-white rounded-2xl border border-[#d2e5d3] shadow-sm p-4">
               <p className="text-xs font-bold text-stone-500 uppercase tracking-wide mb-3">
                 💡 คำแนะนำจาก AI
               </p>
               <ul className="space-y-3">
                 {data.recommendations.map((r, i) => (
                   <li key={i} className="flex gap-3 items-start">
-                    <span className="shrink-0 w-6 h-6 rounded-full bg-green-100 text-green-700 text-xs font-black flex items-center justify-center mt-0.5">
+                    {/* REDESIGN: Surf Crest number badge */}
+                    <span className="shrink-0 w-6 h-6 rounded-full bg-[#d2e5d3] text-[#1d6233] text-xs font-black flex items-center justify-center mt-0.5">
                       {i + 1}
                     </span>
                     <p className="text-sm text-stone-700 leading-relaxed">{r}</p>
@@ -183,8 +188,8 @@ export function ReportsPage() {
               </ul>
             </div>
 
-            {/* Export button */}
-            <button className="w-full bg-indigo-700 text-white rounded-2xl py-4 flex items-center justify-center gap-3 font-bold text-base shadow-md active:bg-indigo-800">
+            {/* Export button — REDESIGN: Green Pea (was indigo) */}
+            <button className="w-full bg-[#1d6233] text-white rounded-2xl py-4 flex items-center justify-center gap-3 font-bold text-base shadow-md active:bg-[#16502a]">
               <Download size={20} />
               ดาวน์โหลดรายงาน PDF
             </button>
