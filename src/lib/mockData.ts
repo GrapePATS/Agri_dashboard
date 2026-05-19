@@ -649,6 +649,69 @@ export const YIELD_SUMMARY: YieldSummary = {
   ],
 };
 
+export const YIELD_SUMMARY_WEEKLY: YieldSummary = {
+  estimated_kg: 63800,
+  quality_grade: 'B',
+  harvest_readiness_pct: 72,
+  confidence: 0.76,
+  zone_yields: [
+    { zone_id: 'zone-a', zone_name: 'แปลง A – ข้าวหอมมะลิ', yield_level: 'high', estimated_kg: 33400 },
+    { zone_id: 'zone-b', zone_name: 'แปลง B – ข้าวเจ้า', yield_level: 'medium', estimated_kg: 21700 },
+    { zone_id: 'zone-c', zone_name: 'แปลง C – ข้าวหอมนิล', yield_level: 'low', estimated_kg: 8700 },
+  ],
+  plant_count: 12450,
+  trend_pct: 8,
+  days_since_planting: 87,
+  estimated_harvest_date: '2026-06-15',
+  growth_stage: 'near_harvest',
+  grade_breakdown: { A: 35, B: 43, C: 17, damaged: 5 },
+  trend_data: [
+    { label: 'สป.5', kg: 55200 },
+    { label: 'สป.6', kg: 57100 },
+    { label: 'สป.7', kg: 58900 },
+    { label: 'สป.8', kg: 63800 },
+  ],
+  market_value_thb: 1148400,
+  ai_insights: [
+    'ผลผลิตรวมรายสัปดาห์เพิ่มขึ้น 8% ต่อเนื่องเป็นสัปดาห์ที่ 3',
+    'แปลง C ยังคงส่งผลต่อคุณภาพรวม ควรเร่งดำเนินการรักษา',
+    'คาดการณ์เก็บเกี่ยวยังคงอยู่ในช่วงเดิม ไม่มีการเลื่อน',
+    'ราคาตลาดข้าวหอมมะลิเพิ่มขึ้น 3% ส่งผลดีต่อมูลค่ารายสัปดาห์',
+  ],
+};
+
+export const YIELD_SUMMARY_MONTHLY: YieldSummary = {
+  estimated_kg: 251000,
+  quality_grade: 'B',
+  harvest_readiness_pct: 72,
+  confidence: 0.69,
+  zone_yields: [
+    { zone_id: 'zone-a', zone_name: 'แปลง A – ข้าวหอมมะลิ', yield_level: 'high', estimated_kg: 131500 },
+    { zone_id: 'zone-b', zone_name: 'แปลง B – ข้าวเจ้า', yield_level: 'medium', estimated_kg: 84300 },
+    { zone_id: 'zone-c', zone_name: 'แปลง C – ข้าวหอมนิล', yield_level: 'low', estimated_kg: 35200 },
+  ],
+  plant_count: 12450,
+  trend_pct: -3,
+  days_since_planting: 87,
+  estimated_harvest_date: '2026-06-15',
+  growth_stage: 'near_harvest',
+  grade_breakdown: { A: 32, B: 44, C: 18, damaged: 6 },
+  trend_data: [
+    { label: 'ม.ค.', kg: 261000 },
+    { label: 'ก.พ.', kg: 258000 },
+    { label: 'มี.ค.', kg: 255000 },
+    { label: 'เม.ย.', kg: 254000 },
+    { label: 'พ.ค.', kg: 251000 },
+  ],
+  market_value_thb: 4518000,
+  ai_insights: [
+    'ผลผลิตรายเดือนลดลง 3% เนื่องจากการระบาดของโรคในแปลง C',
+    'หากควบคุมโรคได้ภายใน 2 สัปดาห์ คาดผลผลิตจะฟื้นตัวในเดือนหน้า',
+    'มูลค่าตลาดรวมเดือนนี้สูงกว่าปีที่แล้ว 15% จากราคาข้าวที่เพิ่มขึ้น',
+    'วางแผนปลูกรอบหน้าโดยขยายพื้นที่แปลง A ที่มีสุขภาพดี',
+  ],
+};
+
 export const DRONE_STATUS: DroneStatus = {
   mission_id: 'mission-042',
   status: 'uploading',
@@ -711,6 +774,292 @@ export const SCAN_HISTORY: ScanRecord[] = [
     label: '7 วันที่แล้ว',
   },
 ];
+
+// ── Per-scan historical snapshots ─────────────────────────────
+// Story: farm was healthy 7 days ago, steadily declining to today's critical state.
+
+const FARM_SUMMARY_D1: FarmSummary = {
+  ...FARM_SUMMARY,
+  last_scan_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+  overall_health_score: 0.71,
+  health_trend: 'declining',
+  active_alerts: 3,
+  zones: [
+    { zone_id: 'zone-a', zone_name: 'แปลง A – ข้าวหอมมะลิ', health_score: 0.88, status: 'healthy' },
+    { zone_id: 'zone-b', zone_name: 'แปลง B – ข้าวเจ้า', health_score: 0.64, status: 'warning' },
+    { zone_id: 'zone-c', zone_name: 'แปลง C – ข้าวหอมนิล', health_score: 0.38, status: 'critical' },
+  ],
+  top_recommendation: 'แปลง C เริ่มมีโรคไหม้ข้าวระบาด ควรเตรียมฉีดพ่นสารทันที',
+};
+
+const FARM_SUMMARY_D3: FarmSummary = {
+  ...FARM_SUMMARY,
+  last_scan_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+  overall_health_score: 0.75,
+  health_trend: 'stable',
+  active_alerts: 2,
+  zones: [
+    { zone_id: 'zone-a', zone_name: 'แปลง A – ข้าวหอมมะลิ', health_score: 0.90, status: 'healthy' },
+    { zone_id: 'zone-b', zone_name: 'แปลง B – ข้าวเจ้า', health_score: 0.71, status: 'warning' },
+    { zone_id: 'zone-c', zone_name: 'แปลง C – ข้าวหอมนิล', health_score: 0.48, status: 'warning' },
+  ],
+  top_recommendation: 'แปลง C มีสัญญาณวัชพืชและเริ่มพบหนอน ควรดำเนินการกำจัดก่อนแพร่ระบาด',
+};
+
+const FARM_SUMMARY_D7: FarmSummary = {
+  ...FARM_SUMMARY,
+  last_scan_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+  overall_health_score: 0.85,
+  health_trend: 'improving',
+  active_alerts: 1,
+  zones: [
+    { zone_id: 'zone-a', zone_name: 'แปลง A – ข้าวหอมมะลิ', health_score: 0.93, status: 'healthy' },
+    { zone_id: 'zone-b', zone_name: 'แปลง B – ข้าวเจ้า', health_score: 0.82, status: 'healthy' },
+    { zone_id: 'zone-c', zone_name: 'แปลง C – ข้าวหอมนิล', health_score: 0.68, status: 'warning' },
+  ],
+  top_recommendation: 'ฟาร์มโดยรวมมีสุขภาพดี ควรดูแลระดับน้ำในแปลง C เพื่อป้องกันวัชพืช',
+};
+
+const DETECTIONS_D1: Detection[] = [
+  { detection_id: 'det-d1-001', detected_at: new Date(Date.now() - 25 * 60 * 60 * 1000).toISOString(), type: 'disease', label: 'Rice Blast', confidence: 0.91, severity: 'high', affected_area_pct: 28.2, zone_id: 'zone-c', zone_name: 'แปลง C – ข้าวหอมนิล', status: 'active', image_url: null, bounding_box: { x: 0.12, y: 0.18, width: 0.45, height: 0.52 }, recommendation: 'ฉีดพ่นสารไตรไซคลาโซล 20% WP ทันที' },
+  { detection_id: 'det-d1-002', detected_at: new Date(Date.now() - 27 * 60 * 60 * 1000).toISOString(), type: 'pest', label: 'Brown Planthopper', confidence: 0.84, severity: 'high', affected_area_pct: 18.5, zone_id: 'zone-c', zone_name: 'แปลง C – ข้าวหอมนิล', status: 'active', image_url: null, bounding_box: { x: 0.3, y: 0.4, width: 0.25, height: 0.3 }, recommendation: 'ฉีดพ่นสารบูโปรเฟซิน 25% SC เน้นบริเวณโคนต้น' },
+  { detection_id: 'det-d1-003', detected_at: new Date(Date.now() - 29 * 60 * 60 * 1000).toISOString(), type: 'disease', label: 'Bacterial Leaf Blight', confidence: 0.76, severity: 'medium', affected_area_pct: 13.1, zone_id: 'zone-b', zone_name: 'แปลง B – ข้าวเจ้า', status: 'active', image_url: null, bounding_box: { x: 0.05, y: 0.1, width: 0.6, height: 0.4 }, recommendation: 'ใช้สารคอปเปอร์ไฮดรอกไซด์ 77% WP' },
+  { detection_id: 'det-d1-004', detected_at: new Date(Date.now() - 32 * 60 * 60 * 1000).toISOString(), type: 'pest', label: 'Stem Borer', confidence: 0.80, severity: 'medium', affected_area_pct: 9.2, zone_id: 'zone-b', zone_name: 'แปลง B – ข้าวเจ้า', status: 'active', image_url: null, bounding_box: { x: 0.2, y: 0.25, width: 0.35, height: 0.45 }, recommendation: 'ติดกับดักแสงไฟล่อแมลงและฉีดพ่นสาร' },
+  { detection_id: 'det-d1-005', detected_at: new Date(Date.now() - 36 * 60 * 60 * 1000).toISOString(), type: 'weed', label: 'Broadleaf Weeds', confidence: 0.95, severity: 'medium', affected_area_pct: 8.1, zone_id: 'zone-a', zone_name: 'แปลง A – ข้าวหอมมะลิ', status: 'active', image_url: null, bounding_box: { x: 0.4, y: 0.5, width: 0.3, height: 0.3 }, recommendation: 'ฉีดพ่นบิสไพริแบค 10% SC' },
+  { detection_id: 'det-d1-006', detected_at: new Date(Date.now() - 44 * 60 * 60 * 1000).toISOString(), type: 'disease', label: 'Rice Blast', confidence: 0.70, severity: 'medium', affected_area_pct: 7.5, zone_id: 'zone-b', zone_name: 'แปลง B – ข้าวเจ้า', status: 'active', image_url: null, bounding_box: { x: 0.15, y: 0.2, width: 0.4, height: 0.35 }, recommendation: 'ติดตามอาการอย่างใกล้ชิด' },
+];
+
+const DETECTIONS_D3: Detection[] = [
+  { detection_id: 'det-d3-001', detected_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), type: 'disease', label: 'Rice Blast', confidence: 0.82, severity: 'medium', affected_area_pct: 14.3, zone_id: 'zone-c', zone_name: 'แปลง C – ข้าวหอมนิล', status: 'active', image_url: null, bounding_box: { x: 0.12, y: 0.18, width: 0.35, height: 0.42 }, recommendation: 'เฝ้าระวัง พิจารณาฉีดพ่นสารป้องกัน' },
+  { detection_id: 'det-d3-002', detected_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000 - 4 * 60 * 60 * 1000).toISOString(), type: 'pest', label: 'Stem Borer', confidence: 0.73, severity: 'medium', affected_area_pct: 8.7, zone_id: 'zone-b', zone_name: 'แปลง B – ข้าวเจ้า', status: 'active', image_url: null, bounding_box: { x: 0.2, y: 0.25, width: 0.35, height: 0.45 }, recommendation: 'ติดกับดักฟีโรโมนเพื่อลดประชากรแมลง' },
+  { detection_id: 'det-d3-003', detected_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000 - 8 * 60 * 60 * 1000).toISOString(), type: 'weed', label: 'Broadleaf Weeds', confidence: 0.90, severity: 'low', affected_area_pct: 6.2, zone_id: 'zone-a', zone_name: 'แปลง A – ข้าวหอมมะลิ', status: 'active', image_url: null, bounding_box: { x: 0.4, y: 0.5, width: 0.3, height: 0.3 }, recommendation: 'กำจัดวัชพืชด้วยแรงงาน หรือรอให้เหมาะสม' },
+  { detection_id: 'det-d3-004', detected_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000 - 12 * 60 * 60 * 1000).toISOString(), type: 'weed', label: 'Broadleaf Weeds', confidence: 0.85, severity: 'low', affected_area_pct: 4.1, zone_id: 'zone-b', zone_name: 'แปลง B – ข้าวเจ้า', status: 'active', image_url: null, bounding_box: { x: 0.55, y: 0.58, width: 0.2, height: 0.22 }, recommendation: 'กำจัดวัชพืชด้วยแรงงาน' },
+];
+
+const DETECTIONS_D7: Detection[] = [
+  { detection_id: 'det-d7-001', detected_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), type: 'weed', label: 'Broadleaf Weeds', confidence: 0.88, severity: 'low', affected_area_pct: 5.3, zone_id: 'zone-a', zone_name: 'แปลง A – ข้าวหอมมะลิ', status: 'active', image_url: null, bounding_box: { x: 0.45, y: 0.45, width: 0.28, height: 0.32 }, recommendation: 'ติดตามอาการ ยังไม่จำเป็นต้องดำเนินการทันที' },
+  { detection_id: 'det-d7-002', detected_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000 - 3 * 60 * 60 * 1000).toISOString(), type: 'pest', label: 'Brown Planthopper', confidence: 0.65, severity: 'low', affected_area_pct: 3.1, zone_id: 'zone-c', zone_name: 'แปลง C – ข้าวหอมนิล', status: 'active', image_url: null, bounding_box: { x: 0.7, y: 0.3, width: 0.15, height: 0.2 }, recommendation: 'ติดตามอาการ ประชากรยังน้อย' },
+];
+
+const YIELD_D1: YieldSummary = {
+  estimated_kg: 8900,
+  quality_grade: 'B',
+  harvest_readiness_pct: 69,
+  confidence: 0.81,
+  zone_yields: [
+    { zone_id: 'zone-a', zone_name: 'แปลง A – ข้าวหอมมะลิ', yield_level: 'high', estimated_kg: 4650 },
+    { zone_id: 'zone-b', zone_name: 'แปลง B – ข้าวเจ้า', yield_level: 'medium', estimated_kg: 3050 },
+    { zone_id: 'zone-c', zone_name: 'แปลง C – ข้าวหอมนิล', yield_level: 'low', estimated_kg: 1200 },
+  ],
+  plant_count: 12450,
+  trend_pct: 9,
+  days_since_planting: 86,
+  estimated_harvest_date: '2026-06-15',
+  growth_stage: 'near_harvest',
+  grade_breakdown: { A: 39, B: 41, C: 15, damaged: 5 },
+  trend_data: [
+    { label: '7 วัน', kg: 7900 }, { label: '6 วัน', kg: 8100 }, { label: '5 วัน', kg: 8050 },
+    { label: '4 วัน', kg: 8300 }, { label: '3 วัน', kg: 8500 }, { label: '2 วัน', kg: 8750 },
+    { label: 'เมื่อวาน', kg: 8900 },
+  ],
+  market_value_thb: 160200,
+  ai_insights: [
+    'ผลผลิตยังเพิ่มขึ้นแต่ชะลอตัว เนื่องจากสภาพโรคในแปลง C',
+    'ควรเร่งดำเนินการรักษาโรคเพื่อรักษาระดับผลผลิต',
+    'คาดการณ์เก็บเกี่ยวภายใน 30 วัน เตรียมอุปกรณ์ล่วงหน้า',
+    'คุณภาพข้าวระดับ B เป็นที่ต้องการของตลาดส่งออก',
+  ],
+};
+
+const YIELD_D3: YieldSummary = {
+  estimated_kg: 8400,
+  quality_grade: 'B',
+  harvest_readiness_pct: 65,
+  confidence: 0.83,
+  zone_yields: [
+    { zone_id: 'zone-a', zone_name: 'แปลง A – ข้าวหอมมะลิ', yield_level: 'high', estimated_kg: 4400 },
+    { zone_id: 'zone-b', zone_name: 'แปลง B – ข้าวเจ้า', yield_level: 'medium', estimated_kg: 2900 },
+    { zone_id: 'zone-c', zone_name: 'แปลง C – ข้าวหอมนิล', yield_level: 'medium', estimated_kg: 1100 },
+  ],
+  plant_count: 12450,
+  trend_pct: 7,
+  days_since_planting: 84,
+  estimated_harvest_date: '2026-06-15',
+  growth_stage: 'near_harvest',
+  grade_breakdown: { A: 41, B: 40, C: 14, damaged: 5 },
+  trend_data: [
+    { label: '7 วัน', kg: 7500 }, { label: '6 วัน', kg: 7650 }, { label: '5 วัน', kg: 7800 },
+    { label: '4 วัน', kg: 7950 }, { label: '3 วัน', kg: 8100 }, { label: '2 วัน', kg: 8250 },
+    { label: '3 วันที่แล้ว', kg: 8400 },
+  ],
+  market_value_thb: 151200,
+  ai_insights: [
+    'ผลผลิตเพิ่มขึ้นสม่ำเสมอ 7% ต่อสัปดาห์',
+    'แปลง C เริ่มส่งสัญญาณชะลอตัว ควรเฝ้าระวัง',
+    'คาดการณ์เก็บเกี่ยวภายใน 32 วัน',
+    'แนะนำใส่ปุ๋ยโพแทสเซียมเพื่อเพิ่มน้ำหนักเมล็ด',
+  ],
+};
+
+const YIELD_D7: YieldSummary = {
+  estimated_kg: 7800,
+  quality_grade: 'A',
+  harvest_readiness_pct: 58,
+  confidence: 0.88,
+  zone_yields: [
+    { zone_id: 'zone-a', zone_name: 'แปลง A – ข้าวหอมมะลิ', yield_level: 'high', estimated_kg: 4100 },
+    { zone_id: 'zone-b', zone_name: 'แปลง B – ข้าวเจ้า', yield_level: 'high', estimated_kg: 2700 },
+    { zone_id: 'zone-c', zone_name: 'แปลง C – ข้าวหอมนิล', yield_level: 'medium', estimated_kg: 1000 },
+  ],
+  plant_count: 12450,
+  trend_pct: 15,
+  days_since_planting: 80,
+  estimated_harvest_date: '2026-06-15',
+  growth_stage: 'near_harvest',
+  grade_breakdown: { A: 45, B: 38, C: 13, damaged: 4 },
+  trend_data: [
+    { label: '7 วัน', kg: 6800 }, { label: '6 วัน', kg: 6950 }, { label: '5 วัน', kg: 7100 },
+    { label: '4 วัน', kg: 7300 }, { label: '3 วัน', kg: 7500 }, { label: '2 วัน', kg: 7650 },
+    { label: '7 วันที่แล้ว', kg: 7800 },
+  ],
+  market_value_thb: 140400,
+  ai_insights: [
+    'ฟาร์มมีสุขภาพดีมาก ผลผลิตเพิ่มขึ้น 15% ต่อเนื่อง',
+    'คุณภาพเกรด A สูงสุดในรอบเดือน เหมาะสำหรับตลาดพรีเมียม',
+    'คาดการณ์เก็บเกี่ยวภายใน 36 วัน สภาพสมบูรณ์ดีมาก',
+    'ทุกแปลงเติบโตตามแผน ไม่มีปัจจัยเสี่ยงที่น่ากังวล',
+  ],
+};
+
+export interface ScanSnapshot {
+  farm: FarmSummary;
+  detections: Detection[];
+  yield_: YieldSummary;
+}
+
+export const SCAN_SNAPSHOTS: Record<string, ScanSnapshot> = {
+  'scan-001': { farm: FARM_SUMMARY, detections: DETECTIONS, yield_: YIELD_SUMMARY },
+  'scan-002': { farm: FARM_SUMMARY_D1, detections: DETECTIONS_D1, yield_: YIELD_D1 },
+  'scan-003': { farm: FARM_SUMMARY_D3, detections: DETECTIONS_D3, yield_: YIELD_D3 },
+  'scan-004': { farm: FARM_SUMMARY_D7, detections: DETECTIONS_D7, yield_: YIELD_D7 },
+};
+
+// ── Per-farm snapshots ─────────────────────────────────────────
+// Story: ไร่สมหมาย is healthy, ไร่บุญมาก has severe multi-zone problems.
+
+const FARM_SUMMARY_002: FarmSummary = {
+  farm_id: 'farm-002',
+  farm_name: 'ไร่สมหมาย',
+  last_scan_at: new Date(Date.now() - 1.5 * 60 * 60 * 1000).toISOString(),
+  overall_health_score: 0.79,
+  health_trend: 'stable',
+  total_area_rai: 18.0,
+  active_alerts: 1,
+  zones: [
+    { zone_id: 'zone-d', zone_name: 'แปลง A – ข้าวหอมมะลิ', health_score: 0.87, status: 'healthy' },
+    { zone_id: 'zone-e', zone_name: 'แปลง B – ข้าวหอมปทุม', health_score: 0.68, status: 'warning' },
+  ],
+  top_recommendation: 'แปลง B มีวัชพืชเริ่มระบาด ควรฉีดพ่นสารกำจัดวัชพืชในสัปดาห์นี้',
+};
+
+const DETECTIONS_002: Detection[] = [
+  { detection_id: 'det-002-001', detected_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), type: 'pest', label: 'Stem Borer', confidence: 0.81, severity: 'medium', affected_area_pct: 11.2, zone_id: 'zone-e', zone_name: 'แปลง B – ข้าวหอมปทุม', status: 'active', image_url: null, bounding_box: { x: 0.2, y: 0.25, width: 0.35, height: 0.45 }, recommendation: 'ติดกับดักฟีโรโมนและฉีดพ่นสารคาร์โบฟูราน 3% G' },
+  { detection_id: 'det-002-002', detected_at: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(), type: 'weed', label: 'Broadleaf Weeds', confidence: 0.93, severity: 'medium', affected_area_pct: 8.7, zone_id: 'zone-e', zone_name: 'แปลง B – ข้าวหอมปทุม', status: 'active', image_url: null, bounding_box: { x: 0.4, y: 0.5, width: 0.3, height: 0.3 }, recommendation: 'ฉีดพ่นบิสไพริแบค 10% SC ในช่วงเช้า' },
+  { detection_id: 'det-002-003', detected_at: new Date(Date.now() - 10 * 60 * 60 * 1000).toISOString(), type: 'weed', label: 'Broadleaf Weeds', confidence: 0.85, severity: 'low', affected_area_pct: 4.3, zone_id: 'zone-d', zone_name: 'แปลง A – ข้าวหอมมะลิ', status: 'active', image_url: null, bounding_box: { x: 0.55, y: 0.45, width: 0.25, height: 0.28 }, recommendation: 'ติดตามอาการ กำจัดด้วยแรงงานได้' },
+];
+
+const YIELD_SUMMARY_002: YieldSummary = {
+  estimated_kg: 6200,
+  quality_grade: 'A',
+  harvest_readiness_pct: 81,
+  confidence: 0.85,
+  zone_yields: [
+    { zone_id: 'zone-d', zone_name: 'แปลง A – ข้าวหอมมะลิ', yield_level: 'high', estimated_kg: 3700 },
+    { zone_id: 'zone-e', zone_name: 'แปลง B – ข้าวหอมปทุม', yield_level: 'medium', estimated_kg: 2500 },
+  ],
+  plant_count: 8100,
+  trend_pct: 11,
+  days_since_planting: 92,
+  estimated_harvest_date: '2026-06-08',
+  growth_stage: 'near_harvest',
+  grade_breakdown: { A: 52, B: 35, C: 10, damaged: 3 },
+  trend_data: [
+    { label: '7 วัน', kg: 5500 }, { label: '6 วัน', kg: 5650 }, { label: '5 วัน', kg: 5780 },
+    { label: '4 วัน', kg: 5900 }, { label: '3 วัน', kg: 6000 }, { label: '2 วัน', kg: 6100 },
+    { label: 'วันนี้', kg: 6200 },
+  ],
+  market_value_thb: 136400,
+  ai_insights: [
+    'ฟาร์มมีสุขภาพดี คุณภาพเกรด A สม่ำเสมอ',
+    'แปลง A ผลผลิตสูง เหมาะสำหรับตลาดส่งออกพรีเมียม',
+    'คาดการณ์เก็บเกี่ยวใน 20 วัน เร็วกว่าไร่อื่นในพื้นที่',
+    'แนะนำเพิ่มพื้นที่แปลง A ในฤดูหน้าเพื่อเพิ่มผลผลิต',
+  ],
+};
+
+const FARM_SUMMARY_003: FarmSummary = {
+  farm_id: 'farm-003',
+  farm_name: 'ไร่บุญมาก',
+  last_scan_at: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
+  overall_health_score: 0.52,
+  health_trend: 'declining',
+  total_area_rai: 32.0,
+  active_alerts: 5,
+  zones: [
+    { zone_id: 'zone-f', zone_name: 'แปลง A – ข้าวเจ้า', health_score: 0.74, status: 'warning' },
+    { zone_id: 'zone-g', zone_name: 'แปลง B – ข้าวเหนียว', health_score: 0.43, status: 'critical' },
+    { zone_id: 'zone-h', zone_name: 'แปลง C – ข้าวหอมมะลิ', health_score: 0.82, status: 'healthy' },
+    { zone_id: 'zone-i', zone_name: 'แปลง D – ข้าวสินเหล็ก', health_score: 0.35, status: 'critical' },
+  ],
+  top_recommendation: 'แปลง B และ D มีโรคและแมลงระบาดหนัก ต้องเร่งดำเนินการแก้ไขทันที',
+};
+
+const DETECTIONS_003: Detection[] = [
+  { detection_id: 'det-003-001', detected_at: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(), type: 'disease', label: 'Rice Blast', confidence: 0.95, severity: 'critical', affected_area_pct: 44.1, zone_id: 'zone-g', zone_name: 'แปลง B – ข้าวเหนียว', status: 'active', image_url: null, bounding_box: { x: 0.1, y: 0.1, width: 0.55, height: 0.6 }, recommendation: 'เร่งด่วน: ฉีดพ่นสารไตรไซคลาโซลทันที แยกแปลงนี้ออกจากแปลงอื่น' },
+  { detection_id: 'det-003-002', detected_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), type: 'pest', label: 'Brown Planthopper', confidence: 0.89, severity: 'critical', affected_area_pct: 39.7, zone_id: 'zone-i', zone_name: 'แปลง D – ข้าวสินเหล็ก', status: 'active', image_url: null, bounding_box: { x: 0.05, y: 0.05, width: 0.6, height: 0.65 }, recommendation: 'เร่งด่วน: ระบาดหนักมาก ปล่อยน้ำเข้าแปลงและฉีดพ่นสารทันที' },
+  { detection_id: 'det-003-003', detected_at: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(), type: 'disease', label: 'Bacterial Leaf Blight', confidence: 0.82, severity: 'high', affected_area_pct: 22.3, zone_id: 'zone-i', zone_name: 'แปลง D – ข้าวสินเหล็ก', status: 'active', image_url: null, bounding_box: { x: 0.08, y: 0.35, width: 0.5, height: 0.4 }, recommendation: 'ฉีดพ่นสารฆ่าเชื้อแบคทีเรียและลดการให้น้ำ' },
+  { detection_id: 'det-003-004', detected_at: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(), type: 'pest', label: 'Stem Borer', confidence: 0.77, severity: 'high', affected_area_pct: 19.8, zone_id: 'zone-g', zone_name: 'แปลง B – ข้าวเหนียว', status: 'active', image_url: null, bounding_box: { x: 0.22, y: 0.28, width: 0.48, height: 0.5 }, recommendation: 'ฉีดพ่นสารคาร์โบฟูรานและติดกับดักฟีโรโมน' },
+  { detection_id: 'det-003-005', detected_at: new Date(Date.now() - 9 * 60 * 60 * 1000).toISOString(), type: 'weed', label: 'Broadleaf Weeds', confidence: 0.91, severity: 'medium', affected_area_pct: 15.2, zone_id: 'zone-f', zone_name: 'แปลง A – ข้าวเจ้า', status: 'active', image_url: null, bounding_box: { x: 0.35, y: 0.4, width: 0.35, height: 0.35 }, recommendation: 'ฉีดพ่นสารกำจัดวัชพืชในช่วงเช้าก่อนแสงแดดแรง' },
+  { detection_id: 'det-003-006', detected_at: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(), type: 'disease', label: 'Rice Blast', confidence: 0.74, severity: 'medium', affected_area_pct: 12.1, zone_id: 'zone-f', zone_name: 'แปลง A – ข้าวเจ้า', status: 'active', image_url: null, bounding_box: { x: 0.15, y: 0.2, width: 0.4, height: 0.35 }, recommendation: 'ติดตามอาการ เฝ้าระวังการแพร่จากแปลง B' },
+  { detection_id: 'det-003-007', detected_at: new Date(Date.now() - 18 * 60 * 60 * 1000).toISOString(), type: 'weed', label: 'Broadleaf Weeds', confidence: 0.87, severity: 'low', affected_area_pct: 5.4, zone_id: 'zone-h', zone_name: 'แปลง C – ข้าวหอมมะลิ', status: 'active', image_url: null, bounding_box: { x: 0.45, y: 0.45, width: 0.28, height: 0.32 }, recommendation: 'กำจัดวัชพืชด้วยแรงงาน' },
+];
+
+const YIELD_SUMMARY_003: YieldSummary = {
+  estimated_kg: 11800,
+  quality_grade: 'C',
+  harvest_readiness_pct: 55,
+  confidence: 0.71,
+  zone_yields: [
+    { zone_id: 'zone-f', zone_name: 'แปลง A – ข้าวเจ้า', yield_level: 'medium', estimated_kg: 3400 },
+    { zone_id: 'zone-g', zone_name: 'แปลง B – ข้าวเหนียว', yield_level: 'low', estimated_kg: 2100 },
+    { zone_id: 'zone-h', zone_name: 'แปลง C – ข้าวหอมมะลิ', yield_level: 'high', estimated_kg: 4400 },
+    { zone_id: 'zone-i', zone_name: 'แปลง D – ข้าวสินเหล็ก', yield_level: 'low', estimated_kg: 1900 },
+  ],
+  plant_count: 17600,
+  trend_pct: -8,
+  days_since_planting: 94,
+  estimated_harvest_date: '2026-06-20',
+  growth_stage: 'near_harvest',
+  grade_breakdown: { A: 22, B: 38, C: 28, damaged: 12 },
+  trend_data: [
+    { label: '7 วัน', kg: 13100 }, { label: '6 วัน', kg: 12900 }, { label: '5 วัน', kg: 12600 },
+    { label: '4 วัน', kg: 12400 }, { label: '3 วัน', kg: 12100 }, { label: '2 วัน', kg: 11950 },
+    { label: 'วันนี้', kg: 11800 },
+  ],
+  market_value_thb: 177000,
+  ai_insights: [
+    'แปลง B และ D มีผลผลิตลดลงมากจากการระบาดของโรคและแมลง',
+    'แปลง C มีสุขภาพดีเป็นความหวังหลักของฤดูกาลนี้',
+    'หากไม่ควบคุมโรคได้ภายใน 1 สัปดาห์ คาดผลผลิตจะลดลงอีก 15-20%',
+    'แนะนำปลูกพันธุ์ต้านทานโรคในแปลง B และ D ในฤดูหน้า',
+  ],
+};
+
+export const FARM_SNAPSHOTS: Record<string, ScanSnapshot> = {
+  'farm-001': SCAN_SNAPSHOTS['scan-001'],
+  'farm-002': { farm: FARM_SUMMARY_002, detections: DETECTIONS_002, yield_: YIELD_SUMMARY_002 },
+  'farm-003': { farm: FARM_SUMMARY_003, detections: DETECTIONS_003, yield_: YIELD_SUMMARY_003 },
+};
 
 export const AI_SUMMARY: AISummary = {
   generated_at: new Date().toISOString(),

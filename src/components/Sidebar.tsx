@@ -23,7 +23,6 @@ const NAV_GROUPS = [
     label: 'ภาพรวม',
     items: [
       { path: '/', label: 'หน้าแรก', Icon: Home },
-      { path: '/yield', label: 'วิเคราะห์ผลผลิต', Icon: Wheat },
     ],
   },
   {
@@ -36,7 +35,6 @@ const NAV_GROUPS = [
   {
     label: 'วิเคราะห์',
     items: [
-      { path: '/reports', label: 'รายงานฟาร์ม', Icon: BarChart2 },
       { path: '/ai-summary', label: 'AI Advisor', Icon: BrainCircuit },
     ],
   },
@@ -83,9 +81,9 @@ export function Sidebar({ isOpen, onClose, activeFarm }: SidebarProps) {
                 🌾
               </div>
               <div>
-                <p className="text-white font-black text-sm leading-tight">AgriVision AI</p>
+                <p className="text-white font-black text-sm leading-tight">PHUETNOI</p>
                 {/* REDESIGN: Sinbad subtitle color */}
-                <p className="text-[#abd8c8] text-[10px]">ระบบเกษตรอัจฉริยะ</p>
+                <p className="text-[#abd8c8] text-[10px]">ระบบผู้ช่วยอัจฉริยะสำหรับเกษตรกรไทย</p>
               </div>
             </div>
             <button
@@ -160,9 +158,9 @@ export function Sidebar({ isOpen, onClose, activeFarm }: SidebarProps) {
         {/* REDESIGN: Surf Crest top border on footer */}
         <div className="border-t border-[#d2e5d3] px-5 py-4 shrink-0">
           <p className="text-[10px] text-stone-400 text-center leading-relaxed">
-            AgriVision AI v1.0
+            PHUETNOI v0.0
           </p>
-          <p className="text-[10px] text-stone-300 text-center">ระบบวิเคราะห์ฟาร์มอัจฉริยะ</p>
+          <p className="text-[10px] text-stone-300 text-center">ระบบผู้ช่วยอัจฉริยะสำหรับเกษตรกรไทย</p>
         </div>
       </div>
     </>

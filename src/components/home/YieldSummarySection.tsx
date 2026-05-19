@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronRight, TrendingUp, TrendingDown, BrainCircuit, Map } from 'lucide-react';
 import type { YieldSummary } from '../../lib/types';
@@ -336,84 +337,175 @@ export function YieldSummarySection({ yield_ }: Props) {
 }
 
 // ── Compact homepage card ────────────────────────────────────
-export function CompactYieldCard({ yield_ }: Props) {
-  const navigate = useNavigate();
-  const totalTons = (yield_.estimated_kg / 1000).toFixed(1);
-  const trendUp = yield_.trend_pct >= 0;
-  const sparkKg = yield_.trend_data.map((d) => d.kg);
+type Period = 'daily' | 'weekly' | 'monthly';
+
+interface CompactYieldCardProps {
+  yield_: YieldSummary;
+  weeklyYield?: YieldSummary;
+  monthlyYield?: YieldSummary;
+}
+
+const PERIOD_LABELS: Record<Period, string> = {
+  daily: 'รายวัน',
+  weekly: 'รายสัปดาห์',
+  monthly: 'รายเดือน',
+};
+
+const TREND_SUFFIX: Record<Period, string> = {
+  daily: 'จากเมื่อวาน',
+  weekly: 'จากสัปดาห์ที่แล้ว',
+  monthly: 'จากเดือนที่แล้ว',
+};
+
+export function CompactYieldCard({ yield_, weeklyYield, monthlyYield }: CompactYieldCardProps) {
+  const [period, setPeriod] = useState<Period>('daily');
+  const [hoveredGrade, setHoveredGrade] = useState<string | null>(null);
+
+  const activeYield =
+    period === 'monthly' && monthlyYield ? monthlyYield :
+    period === 'weekly' && weeklyYield ? weeklyYield :
+    yield_;
+
+  const totalTons = (activeYield.estimated_kg / 1000).toFixed(1);
+  const trendUp = activeYield.trend_pct >= 0;
+  const confidencePct = Math.round(activeYield.confidence * 100);
+  const gradeItems = GRADE_ITEMS(activeYield.grade_breakdown);
+  const hasPeriodChoice = !!(weeklyYield || monthlyYield);
 
   return (
     <div className="px-4">
-      {/* REDESIGN: Surf Crest border */}
-      <div className="bg-white rounded-2xl shadow-sm border border-[#d2e5d3] overflow-hidden">
+      <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
 
-        <div className="p-4 pb-2">
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex-1">
-              <p className="text-stone-400 text-[11px] font-medium">คาดการณ์ผลผลิต</p>
-              <div className="flex items-end gap-1 mt-0.5">
-                <span className="text-4xl font-black text-stone-900 leading-none">{totalTons}</span>
-                <span className="text-stone-400 text-sm mb-1">ตัน</span>
-              </div>
-              <div className={`mt-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold ${
-                trendUp ? 'bg-[#d2e5d3] text-[#1d6233]' : 'bg-red-100 text-red-700'
-              }`}>
-                {trendUp ? <TrendingUp size={9} /> : <TrendingDown size={9} />}
-                <span>{trendUp ? '+' : ''}{yield_.trend_pct}% จากสัปดาห์ที่แล้ว</span>
-              </div>
+        {/* ── Period tabs ── */}
+        {hasPeriodChoice && (
+          <div className="flex">
+            {(['daily', 'weekly', 'monthly'] as Period[]).map((p) => (
+              <button
+                key={p}
+                onClick={() => setPeriod(p)}
+                className={`flex-1 text-[11px] font-semibold py-2.5 border-b-2 transition-colors duration-150 ${
+                  period === p
+                    ? 'text-[#1d6233] border-[#1d6233]'
+                    : 'text-stone-400 border-stone-100 active:bg-stone-50'
+                }`}
+              >
+                {PERIOD_LABELS[p]}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* ── Hero: yield number + grade badge ── */}
+        <div className="flex items-start justify-between px-4 pt-4 pb-3">
+          <div>
+            <p className="text-[9px] text-stone-400 font-medium uppercase tracking-[0.15em] mb-0.5">ผลผลิตรวม</p>
+            <div className="flex items-end gap-1.5 leading-none">
+              <span className="text-[52px] font-black leading-none tracking-tight text-stone-900">
+                {totalTons}
+              </span>
+              <span className="text-stone-400 text-base font-semibold mb-2">ตัน</span>
             </div>
-
-            <div className="text-right shrink-0">
-              <div className={`text-5xl font-black leading-none ${
-                yield_.quality_grade === 'A' ? 'text-[#1d6233]' :
-                yield_.quality_grade === 'B' ? 'text-amber-500' :
-                'text-red-500'
-              }`}>
-                {yield_.quality_grade}
-              </div>
-              <p className="text-stone-400 text-[9px] mt-0.5">คุณภาพโดยรวม</p>
-              <p className="text-stone-700 text-xs font-bold mt-2">{yield_.harvest_readiness_pct}% พร้อมเก็บ</p>
+            <div className={`mt-1.5 inline-flex items-center gap-1 text-[11px] font-semibold ${trendUp ? 'text-[#1d6233]' : 'text-red-500'}`}>
+              {trendUp ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
+              <span>{trendUp ? '+' : ''}{activeYield.trend_pct}% {TREND_SUFFIX[period]}</span>
             </div>
           </div>
 
-          {/* REDESIGN: Sinbad → Green Pea harvest bar */}
-          <div className="mt-3 h-2 bg-[#e9f6eb] rounded-full overflow-hidden">
+          <div className="flex flex-col items-center gap-1 mt-0.5">
+            <div className={`w-[52px] h-[52px] rounded-xl flex items-center justify-center text-2xl font-black border ${
+              activeYield.quality_grade === 'A'
+                ? 'text-[#1d6233] bg-[#e9f6eb] border-[#c8dfc9]'
+                : activeYield.quality_grade === 'B'
+                ? 'text-amber-600 bg-amber-50 border-amber-200'
+                : 'text-red-600 bg-red-50 border-red-200'
+            }`}>
+              {activeYield.quality_grade}
+            </div>
+            <span className="text-[9px] text-stone-400 font-medium">คุณภาพ</span>
+          </div>
+        </div>
+
+        {/* ── Harvest readiness ── */}
+        <div className="flex items-center gap-3 px-4 py-2.5 border-t border-stone-100">
+          <span className="text-[10px] text-stone-500 font-medium shrink-0 w-24">ความพร้อมเก็บ</span>
+          <div className="flex-1 h-1.5 bg-stone-100 rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-[#abd8c8] to-[#1d6233] rounded-full"
-              style={{ width: `${yield_.harvest_readiness_pct}%` }}
+              className="h-full rounded-full bg-[#1d6233]"
+              style={{ width: `${activeYield.harvest_readiness_pct}%` }}
             />
           </div>
+          <span className="text-[11px] font-black text-[#1d6233] shrink-0">{activeYield.harvest_readiness_pct}%</span>
         </div>
 
-        <div className="px-4 pt-2 pb-1">
-          <Sparkline data={sparkKg} gradId="yield-compact" />
+        {/* ── Stats 2×2 grid ── */}
+        <div className="grid grid-cols-2 border-t border-stone-100">
+          <div className="px-4 py-3 border-r border-stone-100">
+            <p className="text-[9px] text-stone-400 uppercase tracking-widest mb-0.5">จำนวนต้น</p>
+            <p className="text-[13px] font-black text-stone-900 leading-none">
+              {activeYield.plant_count.toLocaleString()}
+              <span className="text-[10px] font-normal text-stone-400 ml-0.5">ต้น</span>
+            </p>
+          </div>
+          <div className="px-4 py-3">
+            <p className="text-[9px] text-stone-400 uppercase tracking-widest mb-0.5">AI เชื่อมั่น</p>
+            <p className="text-[13px] font-black text-stone-900 leading-none">{confidencePct}%</p>
+          </div>
+          <div className="px-4 py-3 border-t border-r border-stone-100">
+            <p className="text-[9px] text-stone-400 uppercase tracking-widest mb-0.5">ปลูกมาแล้ว</p>
+            <p className="text-[13px] font-black text-stone-900 leading-none">
+              {activeYield.days_since_planting}
+              <span className="text-[10px] font-normal text-stone-400 ml-0.5">วัน</span>
+            </p>
+          </div>
+          <div className="px-4 py-3 border-t border-stone-100">
+            <p className="text-[9px] text-stone-400 uppercase tracking-widest mb-0.5">มูลค่าตลาด</p>
+            <p className="text-[13px] font-black text-stone-900 leading-none">
+              {activeYield.market_value_thb != null
+                ? `฿${(activeYield.market_value_thb / 1000).toFixed(0)}K`
+                : '—'}
+              {activeYield.market_value_thb != null && (
+                <span className="text-[10px] font-normal text-stone-400 ml-0.5">บาท</span>
+              )}
+            </p>
+          </div>
         </div>
 
-        <div className="px-4 pb-3 flex gap-2 mt-1">
-          {yield_.zone_yields.map((z) => (
-            <div key={z.zone_id} className="flex-1 flex flex-col gap-1">
-              <div className={`h-1.5 rounded-full ${
-                z.yield_level === 'high' ? 'bg-[#1d6233]' :
-                z.yield_level === 'medium' ? 'bg-amber-400' :
-                'bg-red-400'
-              }`} />
-              <p className="text-[9px] text-stone-400 text-center truncate">
-                {z.zone_name.split('–')[0].trim()}
-              </p>
-            </div>
-          ))}
+        {/* ── Grade breakdown ── */}
+        <div className="px-4 pt-3 pb-4 border-t border-stone-100">
+          <p className="text-[9px] text-stone-400 uppercase tracking-widest mb-2.5">คุณภาพผลผลิต</p>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-2.5">
+            {gradeItems.map(({ label, pct, bar }) => {
+              const cropCount = Math.round(activeYield.plant_count * pct / 100);
+              const isHovered = hoveredGrade === label;
+              const barColor = bar.includes('1d6233') ? '#1d6233'
+                : bar.includes('amber') ? '#f59e0b'
+                : bar.includes('orange') ? '#f97316'
+                : '#ef4444';
+              return (
+                <div
+                  key={label}
+                  onMouseEnter={() => setHoveredGrade(label)}
+                  onMouseLeave={() => setHoveredGrade(null)}
+                  className="cursor-default"
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[10px] font-semibold text-stone-600">{label}</span>
+                    <span className={`text-[10px] font-bold transition-colors duration-150 ${isHovered ? 'text-stone-900' : 'text-stone-400'}`}>
+                      {isHovered ? `${cropCount} ต้น` : `${pct}%`}
+                    </span>
+                  </div>
+                  <div className="h-1.5 bg-stone-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full"
+                      style={{ width: `${pct}%`, backgroundColor: barColor }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
-        {/* REDESIGN: Surf Crest divider, Green Pea CTA text */}
-        <div className="border-t border-[#d2e5d3]">
-          <button
-            onClick={() => navigate('/yield')}
-            className="w-full flex items-center justify-center gap-2 text-[#1d6233] font-semibold text-sm py-3.5 active:bg-[#e9f6eb]"
-          >
-            ดูวิเคราะห์ผลผลิตเต็มรูปแบบ
-            <ChevronRight size={16} />
-          </button>
-        </div>
       </div>
     </div>
   );

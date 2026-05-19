@@ -12,17 +12,18 @@ import { FarmHealthSection } from '../components/home/FarmHealthSection';
 import { DateFilterSection } from '../components/home/DateFilterSection';
 import { CompactYieldCard } from '../components/home/YieldSummarySection';
 import { SmartAlertsSection } from '../components/home/SmartAlertsSection';
-import { DroneStatusSection } from '../components/home/DroneStatusSection';
 import { Skeleton, SkeletonCard } from '../components/ui/Skeleton';
 import { Sidebar } from '../components/Sidebar';
 import { BottomNav } from '../components/BottomNav';
-import { FARM_LIST } from '../lib/mockData';
-import type { FarmOption, FarmZoneOption } from '../lib/types';
+import { FARM_LIST, YIELD_SUMMARY_WEEKLY, YIELD_SUMMARY_MONTHLY, SCAN_SNAPSHOTS, FARM_SNAPSHOTS } from '../lib/mockData';
+import type { FarmOption, FarmZoneOption, FarmSummary, Detection } from '../lib/types';
 
 function formatLastScan(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime();
   const h = Math.floor(diff / (1000 * 60 * 60));
   const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  if (h >= 48) return `ข้อมูลเมื่อ ${Math.floor(h / 24)} วันที่แล้ว`;
+  if (h >= 24) return 'ข้อมูลเมื่อวาน';
   if (h > 0) return `สแกนเมื่อ ${h} ชม. ${m} นาทีที่แล้ว`;
   return `สแกนเมื่อ ${m} นาทีที่แล้ว`;
 }
@@ -36,6 +37,7 @@ export function HomePage() {
 
   const [selectedFarm, setSelectedFarm] = useState<FarmOption>(FARM_LIST[0]);
   const [selectedZone, setSelectedZone] = useState<FarmZoneOption | null>(null);
+  const [selectedScanId, setSelectedScanId] = useState<string>('scan-001');
 
   const { data: farm, isLoading: farmLoading, refetch, isFetching } = useFarmSummary();
   const { data: detectionsData, isLoading: detLoading } = useDetections({ status: 'active', limit: 20 });
@@ -44,11 +46,30 @@ export function HomePage() {
   const { data: scans, isLoading: scansLoading } = useScanHistory();
 
   const isLoading = farmLoading || detLoading || yieldLoading || droneLoading || scansLoading;
-  const activeAlerts = farm?.active_alerts ?? 0;
+
+  // Pick base snapshot: farm-001 uses date-based scan history; other farms use their own data
+  const baseSnapshot =
+    selectedFarm.farm_id === 'farm-001'
+      ? (SCAN_SNAPSHOTS[selectedScanId] ?? SCAN_SNAPSHOTS['scan-001'])
+      : (FARM_SNAPSHOTS[selectedFarm.farm_id] ?? FARM_SNAPSHOTS['farm-001']);
+
+  // Apply zone filter on top of base snapshot
+  const filteredDetections = selectedZone
+    ? baseSnapshot.detections.filter((d) => d.zone_id === selectedZone.zone_id)
+    : baseSnapshot.detections;
+
+  const displayFarm = selectedZone
+    ? buildZoneFarmView(baseSnapshot.farm, selectedZone.zone_id, filteredDetections)
+    : baseSnapshot.farm;
+  const displayDetections = filteredDetections;
+  const displayYield = baseSnapshot.yield_;
+
+  const activeAlerts = displayFarm.active_alerts;
 
   const handleFarmSelect = (f: FarmOption) => {
     setSelectedFarm(f);
     setSelectedZone(null);
+    setSelectedScanId('scan-001');
   };
 
   return (
@@ -78,9 +99,9 @@ export function HomePage() {
                 🌾
               </div>
               <div>
-                <p className="text-white font-black text-base leading-tight">AgriVision AI</p>
+                <p className="text-white font-black text-base leading-tight">PHUETNOI</p>
                 {/* REDESIGN: Sinbad subtitle */}
-                <p className="text-[#abd8c8] text-[10px]">ระบบวิเคราะห์ฟาร์มอัจฉริยะ</p>
+                <p className="text-[#abd8c8] text-[10px]">ระบบผู้ช่วยอัจฉริยะสำหรับเกษตรกรไทย</p>
               </div>
             </div>
           </div>
@@ -193,28 +214,27 @@ export function HomePage() {
 
           <SectionWrapper title="สุขภาพฟาร์ม" emoji="🏥">
             <FarmHealthSection
-              farm={farm}
-              detections={detectionsData?.items ?? []}
-              lastScanLabel={formatLastScan(farm.last_scan_at)}
+              farm={displayFarm}
+              detections={displayDetections}
+              lastScanLabel={formatLastScan(displayFarm.last_scan_at)}
             />
           </SectionWrapper>
 
-          {yieldData && (
-            <SectionWrapper title="วิเคราะห์ผลผลิต" emoji="🌾">
-              <CompactYieldCard yield_={yieldData} />
-            </SectionWrapper>
-          )}
-
-          <SectionWrapper title="เลือกช่วงเวลา" emoji="📅">
-            <DateFilterSection scans={scans ?? []} />
+          <SectionWrapper title="วิเคราะห์ผลผลิต" emoji="🌾">
+            <CompactYieldCard yield_={displayYield} weeklyYield={YIELD_SUMMARY_WEEKLY} monthlyYield={YIELD_SUMMARY_MONTHLY} />
           </SectionWrapper>
 
-          {drone && (
-            <SectionWrapper title="สถานะโดรน" emoji="🛸">
-              <DroneStatusSection drone={drone} />
+          {selectedFarm.farm_id === 'farm-001' && (
+            <SectionWrapper title="เลือกช่วงเวลา" emoji="📅">
+              <DateFilterSection
+                scans={scans ?? []}
+                selectedScanId={selectedScanId}
+                onScanChange={setSelectedScanId}
+              />
             </SectionWrapper>
           )}
 
+          
           {/* AI Advisor Banner — REDESIGN: Green Pea solid, no indigo */}
           <div className="px-4">
             <button
@@ -440,13 +460,26 @@ export function HomePage() {
             <div className="h-px bg-[#d2e5d3] shrink-0" />
 
             <div className="overflow-y-auto overscroll-contain pt-3 pb-6">
-              <SmartAlertsSection detections={detectionsData?.items ?? []} showHeader={false} compact />
+              <SmartAlertsSection detections={displayDetections} showHeader={false} compact />
             </div>
           </div>
         </>
       )}
     </div>
   );
+}
+
+function buildZoneFarmView(farm: FarmSummary, zoneId: string, dets: Detection[]): FarmSummary {
+  const zone = farm.zones.find((z) => z.zone_id === zoneId);
+  if (!zone) return farm;
+  return {
+    ...farm,
+    overall_health_score: zone.health_score,
+    active_alerts: dets.filter((d) => d.status === 'active').length,
+    zones: [zone],
+    top_recommendation:
+      dets.find((d) => d.status === 'active')?.recommendation ?? farm.top_recommendation,
+  };
 }
 
 function SectionWrapper({
