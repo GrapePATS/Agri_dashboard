@@ -9,6 +9,7 @@ import type {
   DroneStatus,
   ScanRecord,
   FarmOption,
+  SvgZoneMeta,
 } from './types';
 
 export const FARM_SUMMARY: FarmSummary = {
@@ -20,24 +21,10 @@ export const FARM_SUMMARY: FarmSummary = {
   total_area_rai: 24.5,
   active_alerts: 4,
   zones: [
-    {
-      zone_id: 'zone-a',
-      zone_name: 'แปลง A – ข้าวหอมมะลิ',
-      health_score: 0.87,
-      status: 'healthy',
-    },
-    {
-      zone_id: 'zone-b',
-      zone_name: 'แปลง B – ข้าวเจ้า',
-      health_score: 0.58,
-      status: 'warning',
-    },
-    {
-      zone_id: 'zone-c',
-      zone_name: 'แปลง C – ข้าวหอมนิล',
-      health_score: 0.31,
-      status: 'critical',
-    },
+    { zone_id: 'zone-a', zone_name: 'แปลง A – ข้าวหอมมะลิ', health_score: 0.87, status: 'healthy' },
+    { zone_id: 'zone-b', zone_name: 'แปลง B – ข้าวเจ้า', health_score: 0.58, status: 'warning' },
+    { zone_id: 'zone-c', zone_name: 'แปลง C – ข้าวหอมนิล', health_score: 0.31, status: 'critical' },
+    { zone_id: 'zone-d', zone_name: 'แปลง D – ข้าวหอมปทุม', health_score: 0.92, status: 'healthy' },
   ],
   top_recommendation:
     'แปลง C มีโรคไหม้ข้าวระบาดหนัก ควรฉีดพ่นสารเคมีป้องกันโรคภายใน 24 ชั่วโมง',
@@ -403,6 +390,19 @@ export const MAP_DATA: MapData = {
       ],
       detection_count: 8,
     },
+    {
+      zone_id: 'zone-d',
+      zone_name: 'แปลง D – ข้าวหอมปทุม',
+      health_score: 0.92,
+      status: 'healthy',
+      polygon: [
+        { lat: 18.7635, lng: 98.9680 },
+        { lat: 18.7635, lng: 98.9710 },
+        { lat: 18.7617, lng: 98.9710 },
+        { lat: 18.7617, lng: 98.9680 },
+      ],
+      detection_count: 3,
+    },
   ],
   detection_markers: [
     { detection_id: 'det-001', lat: 18.7605, lng: 98.9690, type: 'disease', severity: 'critical' },
@@ -732,6 +732,7 @@ export const FARM_LIST: FarmOption[] = [
       { zone_id: 'zone-a', zone_name: 'แปลง A', area_rai: 10.5, crop: 'ข้าวหอมมะลิ' },
       { zone_id: 'zone-b', zone_name: 'แปลง B', area_rai: 8.0, crop: 'ข้าวเจ้า' },
       { zone_id: 'zone-c', zone_name: 'แปลง C', area_rai: 6.0, crop: 'ข้าวหอมนิล' },
+      { zone_id: 'zone-d', zone_name: 'แปลง D', area_rai: 8.0, crop: 'ข้าวหอมปทุม' },
     ],
   },
   {
@@ -1060,6 +1061,75 @@ export const FARM_SNAPSHOTS: Record<string, ScanSnapshot> = {
   'farm-002': { farm: FARM_SUMMARY_002, detections: DETECTIONS_002, yield_: YIELD_SUMMARY_002 },
   'farm-003': { farm: FARM_SUMMARY_003, detections: DETECTIONS_003, yield_: YIELD_SUMMARY_003 },
 };
+
+// ── SVG Farm Map zone definitions ────────────────────────────────
+// One entry per visual quadrant; zone_id aligns with FARM_SUMMARY zones.
+export const SVG_ZONES: SvgZoneMeta[] = [
+  {
+    zone_id: 'zone-a',
+    label: 'แปลง A',
+    label_th: 'NW · แปลงเหนือ-ตะวันตก',
+    quadrant: 'NW',
+    stage: 'mature',
+    stage_th: 'Mature · พร้อมเก็บ',
+    stage_color: '#2D6A4F',
+    density: 56,
+    tree_count: 312,
+    grades: { A: 55, B: 25, C: 12, U: 8 },
+    problems: { insect: 8, disease: 5, weed: 2 },
+    harvest: 'not',
+    health_score: 0.87,
+    svg_rect: { x: 4, y: 4, w: 254, h: 200 },
+  },
+  {
+    zone_id: 'zone-b',
+    label: 'แปลง B',
+    label_th: 'NE · แปลงเหนือ-ตะวันออก',
+    quadrant: 'NE',
+    stage: 'growing',
+    stage_th: 'Growing · กำลังเติบโต',
+    stage_color: '#4A8A60',
+    density: 48,
+    tree_count: 287,
+    grades: { A: 30, B: 40, C: 20, U: 10 },
+    problems: { insect: 4, disease: 3, weed: 11 },
+    harvest: 'soon',
+    health_score: 0.58,
+    svg_rect: { x: 302, y: 4, w: 254, h: 200 },
+  },
+  {
+    zone_id: 'zone-c',
+    label: 'แปลง C',
+    label_th: 'SW · แปลงใต้-ตะวันตก',
+    quadrant: 'SW',
+    stage: 'near_harvest',
+    stage_th: 'Near Harvest · ใกล้เก็บ',
+    stage_color: '#B8860B',
+    density: 38,
+    tree_count: 198,
+    grades: { A: 10, B: 20, C: 35, U: 35 },
+    problems: { insect: 2, disease: 7, weed: 6 },
+    harvest: 'not',
+    health_score: 0.31,
+    svg_rect: { x: 4, y: 244, w: 254, h: 192 },
+  },
+  {
+    zone_id: 'zone-d',
+    label: 'แปลง D',
+    label_th: 'SE · แปลงใต้-ตะวันออก',
+    quadrant: 'SE',
+    stage: 'mature',
+    stage_th: 'Harvest Ready · พร้อมเก็บเกี่ยว',
+    stage_color: '#C0622F',
+    density: 65,
+    tree_count: 341,
+    grades: { A: 60, B: 28, C: 8, U: 4 },
+    problems: { insect: 4, disease: 2, weed: 1 },
+    harvest: 'ready',
+    health_score: 0.92,
+    svg_rect: { x: 302, y: 244, w: 254, h: 192 },
+  },
+];
 
 export const AI_SUMMARY: AISummary = {
   generated_at: new Date().toISOString(),

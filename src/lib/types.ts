@@ -197,3 +197,41 @@ export interface ScanRecord {
   scanned_at: string;
   label: string;
 }
+
+// ── SVG Farm Map ──────────────────────────────────────────────────
+export interface SvgZoneMeta {
+  zone_id: string;
+  label: string;
+  label_th: string;
+  quadrant: 'NW' | 'NE' | 'SW' | 'SE';
+  stage: 'mature' | 'growing' | 'near_harvest' | 'seedling';
+  stage_th: string;
+  stage_color: string;
+  density: number;
+  tree_count: number;
+  grades: { A: number; B: number; C: number; U: number };
+  problems: { insect: number; disease: number; weed: number };
+  harvest: 'ready' | 'soon' | 'not';
+  health_score: number;
+  svg_rect: { x: number; y: number; w: number; h: number };
+}
+
+export interface SvgTree {
+  id: string;
+  zone_id: string;
+  px: number;
+  py: number;
+  grade: 'A' | 'B' | 'C' | 'U';
+  fruit_count: number;
+  has_problem: boolean;
+  problem_type: 'แมลง' | 'โรค' | 'วัชพืช' | null;
+  problem_sev: 'Low' | 'Medium' | 'High' | null;
+  problem_conf: number | null;
+  row: number;
+  col: number;
+  lat: number;
+  lng: number;
+  species: string;
+  age: number;
+  harvest_days: number;
+}
