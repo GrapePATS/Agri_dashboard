@@ -1,7 +1,8 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import {
   ArrowLeft, X, Eye, EyeOff, ChevronRight,
   ChevronUp, ChevronDown, Layers, Satellite, Map,
+  Plus, Minus,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useMapData } from '../hooks/useMapData';
@@ -248,9 +249,9 @@ function ZoneTreeSummary({ zone, onBack }: { zone: SvgZoneMeta; onBack: () => vo
       </InfoCard>
 
       <div className="rounded-2xl p-4 text-center" style={{ background: C.greenLight, border: `1px solid ${C.border}` }}>
-        <div className="text-3xl mb-2">🌿</div>
+        <div className="text-3xl mb-2">🍊</div>
         <div className="text-sm font-semibold" style={{ color: C.green }}>
-          แตะต้นไม้บนแผนที่
+          แตะต้นส้มบนแผนที่
         </div>
         <div className="text-xs mt-1" style={{ color: C.dim }}>เพื่อดูรายละเอียดแต่ละต้น</div>
       </div>
@@ -375,6 +376,18 @@ function TreeDetail({ tree, zone, onClose }: { tree: SvgTree; zone: SvgZoneMeta;
         </div>
       </div>
 
+      {/* 0. รูปภาพต้นส้ม (placeholder — จะเพิ่มรูปจริงภายหลัง) */}
+      <InfoCard title="รูปภาพต้นส้ม">
+        <div
+          className="w-full rounded-xl flex flex-col items-center justify-center gap-2"
+          style={{ height: '140px', background: '#f9fafb', border: `2px dashed ${C.border}` }}
+        >
+          <span style={{ fontSize: '2.5rem' }}>📷</span>
+          <p className="text-sm font-medium" style={{ color: C.dim }}>รูปภาพต้นส้ม {tree.id.toUpperCase()}</p>
+          <p className="text-xs" style={{ color: '#9ca3af' }}>ยังไม่มีรูปภาพ — จะเพิ่มในอนาคต</p>
+        </div>
+      </InfoCard>
+
       {/* 1. ผลผลิต */}
       <InfoCard title="1. จำนวนผลผลิต">
         <div className="grid grid-cols-2 gap-2 mb-3">
@@ -461,11 +474,22 @@ export function MapPage() {
   const [viewMode, setViewMode] = useState<'svg' | 'satellite'>('svg');
   const [svgActiveZoneId, setSvgActiveZoneId] = useState<string | null>(null);
   const [selectedTree, setSelectedTree] = useState<SvgTree | null>(null);
+  const [selectedTreeZone, setSelectedTreeZone] = useState<SvgZoneMeta | null>(null);
   const [showProblems, setShowProblems] = useState(true);
   const [showStageColors, setShowStageColors] = useState(true);
   const [selectedZone, setSelectedZone] = useState<ZonePolygon | null>(null);
   const [activeLayer, setActiveLayer] = useState<LayerKey>('health');
   const [panelExpanded, setPanelExpanded] = useState(false);
+
+  // ── Panel resize / hide ───────────────────────────────────────────
+  const [mapZoom, setMapZoom] = useState(1);
+  const [isPanelHidden, setIsPanelHidden] = useState(false);
+  const [userPanelH, setUserPanelH] = useState<number | null>(null);
+  const [dragging, setDragging] = useState(false);
+  const dragRef = useRef<{ startY: number; startH: number } | null>(null);
+  const didDrag = useRef(false);
+  const MIN_PANEL_H = 64;
+  const MAX_PANEL_H = typeof window !== 'undefined' ? Math.floor(window.innerHeight * 0.88) : 720;
 
   const problemsByZone = useMemo<Record<string, ProblemCounts>>(() => {
     const items = detectionsData?.items ?? [];
@@ -487,35 +511,88 @@ export function MapPage() {
   const readyZones = SVG_ZONES.filter(z => z.harvest === 'ready').length;
   const svgActiveZone = SVG_ZONES.find(z => z.zone_id === svgActiveZoneId) ?? null;
 
-  const panelH =
-    selectedTree ? '65dvh'
-    : svgActiveZoneId && viewMode === 'svg' ? '50dvh'
-    : selectedZone && viewMode === 'satellite' ? '60dvh'
-    : panelExpanded ? '44dvh'
-    : '200px';
+  // ── Snap heights (px) by content context ─────────────────────────
+  const snapH = selectedTree ? 520
+    : svgActiveZoneId && viewMode === 'svg' ? 400
+    : selectedZone && viewMode === 'satellite' ? 480
+    : panelExpanded ? 350
+    : 200;
+
+  const effectivePanelH = userPanelH ?? snapH;
+
+  // Reset user override & un-hide when selection context changes
+  useEffect(() => {
+    setUserPanelH(null);
+    setIsPanelHidden(false);
+  }, [selectedTree?.id, svgActiveZoneId, selectedZone?.zone_id]);
+
+  // Reset zoom when switching view mode
+  useEffect(() => {
+    setMapZoom(1);
+    setUserPanelH(null);
+  }, [viewMode]);
 
   const panelTitle =
-    selectedTree ? `🌳 ${selectedTree.id.toUpperCase()}`
-    : svgActiveZoneId ? `${svgActiveZone?.label ?? ''} · รายละเอียดต้นไม้`
+    selectedTree ? `🍊 ${selectedTree.id.toUpperCase()}`
+    : svgActiveZoneId ? `${svgActiveZone?.label ?? ''} · รายละเอียดต้นส้ม`
     : selectedZone ? selectedZone.zone_name
     : `ภาพรวมปัญหา · ${totalProblems} รายการ`;
 
+  // ── Drag-to-resize handlers ───────────────────────────────────────
+  function handleDragStart(e: React.PointerEvent) {
+    dragRef.current = { startY: e.clientY, startH: effectivePanelH };
+    didDrag.current = false;
+    setDragging(true);
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+  }
+
+  function handleDragMove(e: React.PointerEvent) {
+    if (!dragRef.current) return;
+    const delta = dragRef.current.startY - e.clientY;
+    if (Math.abs(delta) > 4) didDrag.current = true;
+    const newH = Math.max(MIN_PANEL_H, Math.min(MAX_PANEL_H, dragRef.current.startH + delta));
+    setUserPanelH(newH);
+  }
+
+  function handleDragEnd(e: React.PointerEvent) {
+    if (!dragRef.current) { setDragging(false); return; }
+    const finalH = dragRef.current.startH + (dragRef.current.startY - e.clientY);
+    if (finalH < 120) {
+      setIsPanelHidden(true);
+      setUserPanelH(null);
+    }
+    dragRef.current = null;
+    setDragging(false);
+  }
+
+  // ── Existing event handlers ───────────────────────────────────────
   function handleSvgZoneClick(zoneId: string) {
     setSvgActiveZoneId(zoneId);
     setSelectedTree(null);
+    setSelectedTreeZone(null);
     setPanelExpanded(true);
+    setMapZoom(1);
   }
 
   function handleSvgTreeClick(tree: SvgTree) {
     setSelectedTree(tree);
+    setSelectedTreeZone(SVG_ZONES.find(z => z.zone_id === svgActiveZoneId) ?? null);
+  }
+
+  function handleSatellitePlantClick(tree: SvgTree, zone: SvgZoneMeta) {
+    setSelectedTree(tree);
+    setSelectedTreeZone(zone);
+    setSelectedZone(null);
   }
 
   function handleSvgBack() {
     if (selectedTree) {
       setSelectedTree(null);
+      setSelectedTreeZone(null);
     } else {
       setSvgActiveZoneId(null);
       setPanelExpanded(false);
+      setMapZoom(1);
     }
   }
 
@@ -524,6 +601,7 @@ export function MapPage() {
     setSelectedZone(null);
     setSvgActiveZoneId(null);
     setSelectedTree(null);
+    setSelectedTreeZone(null);
   }
 
   return (
@@ -540,9 +618,9 @@ export function MapPage() {
             <ArrowLeft size={20} className="text-white" />
           </button>
           <div className="flex-1 min-w-0">
-            <h1 className="text-white font-black text-lg leading-tight">🗺️ แผนที่ฟาร์ม</h1>
+            <h1 className="text-white font-black text-lg leading-tight">🗺️ แผนที่สวนส้ม</h1>
             <p className="text-xs mt-0.5" style={{ color: C.headerSub }}>
-              {viewMode === 'svg' ? 'แตะแปลง → ดูต้นไม้ → แตะต้นไม้เพื่อรายละเอียด' : 'แตะแปลงเพื่อดูรายละเอียด'}
+              {viewMode === 'svg' ? 'แตะแปลง → ดูต้นส้ม → แตะต้นเพื่อรายละเอียด' : 'แตะแปลงหรือต้นส้มเพื่อดูรายละเอียด'}
             </p>
           </div>
           <button
@@ -590,7 +668,7 @@ export function MapPage() {
 
               <span className="text-xs font-bold px-3 py-2 rounded-xl"
                 style={{ background: C.plantBg, color: C.green }}>
-                {selectedTree ? '🌳 รายละเอียดต้น' : svgActiveZoneId ? `📍 ${svgActiveZone?.quadrant ?? ''}` : '🗺️ ภาพรวมฟาร์ม'}
+                {selectedTree ? '🍊 รายละเอียดต้นส้ม' : svgActiveZoneId ? `📍 ${svgActiveZone?.quadrant ?? ''}` : '🗺️ ภาพรวมสวนส้ม'}
               </span>
 
               <div className="w-px h-5 mx-1" style={{ background: C.border }} />
@@ -653,6 +731,7 @@ export function MapPage() {
               selectedTreeId={selectedTree?.id ?? null}
               onZoneClick={handleSvgZoneClick}
               onTreeClick={handleSvgTreeClick}
+              zoomLevel={mapZoom}
             />
           </div>
         ) : (
@@ -674,56 +753,143 @@ export function MapPage() {
                 </div>
               </div>
             )}
-            {mapData && <FarmMap data={mapData} onZoneClick={setSelectedZone} />}
+            {mapData && (
+              <FarmMap
+                data={mapData}
+                onZoneClick={setSelectedZone}
+                onPlantClick={handleSatellitePlantClick}
+                zoomLevel={mapZoom}
+              />
+            )}
           </>
         )}
+
+        {/* ── Zoom controls ── */}
+        <div
+          className="absolute right-3 flex flex-col items-center gap-1 z-10"
+          style={{ bottom: isPanelHidden ? '72px' : '16px', transition: 'bottom 0.2s ease' }}
+        >
+          <button
+            onClick={() => setMapZoom(z => Math.min(4, parseFloat((z + 0.5).toFixed(1))))}
+            disabled={mapZoom >= 4}
+            className="w-10 h-10 rounded-xl flex items-center justify-center active:opacity-70 disabled:opacity-30"
+            style={{ background: 'rgba(10,21,32,0.82)', border: '1px solid rgba(255,255,255,0.18)', color: '#fff', backdropFilter: 'blur(4px)' }}
+          >
+            <Plus size={16} />
+          </button>
+          <span
+            className="text-xs font-black tabular-nums"
+            style={{ color: 'rgba(255,255,255,0.75)', textShadow: '0 1px 3px rgba(0,0,0,0.6)', minWidth: '2ch', textAlign: 'center' }}
+          >
+            {mapZoom === 1 ? '1×' : `${mapZoom}×`}
+          </span>
+          <button
+            onClick={() => setMapZoom(z => Math.max(1, parseFloat((z - 0.5).toFixed(1))))}
+            disabled={mapZoom <= 1}
+            className="w-10 h-10 rounded-xl flex items-center justify-center active:opacity-70 disabled:opacity-30"
+            style={{ background: 'rgba(10,21,32,0.82)', border: '1px solid rgba(255,255,255,0.18)', color: '#fff', backdropFilter: 'blur(4px)' }}
+          >
+            <Minus size={16} />
+          </button>
+        </div>
       </div>
 
-      {/* ── Bottom panel ── */}
-      <div
-        className="shrink-0 overflow-hidden transition-all duration-300"
-        style={{ height: panelH, background: C.card, borderTop: `2px solid ${C.border}` }}
-      >
-        {/* Panel handle */}
+      {/* ── Bottom panel (hidden state: compact show-button strip) ── */}
+      {isPanelHidden ? (
         <div
-          className="flex items-center justify-between px-4 py-3 cursor-pointer select-none"
-          style={{ borderBottom: `1px solid ${C.border}` }}
-          onClick={() => {
-            const noSelection = !selectedTree && !svgActiveZoneId && !selectedZone;
-            if (noSelection) setPanelExpanded(v => !v);
+          className="shrink-0 px-4 py-2.5"
+          style={{ background: C.card, borderTop: `2px solid ${C.border}` }}
+        >
+          <button
+            onClick={() => setIsPanelHidden(false)}
+            className="w-full flex items-center justify-center gap-2 py-2.5 rounded-2xl text-sm font-bold active:opacity-70"
+            style={{ background: C.greenLight, color: C.green, border: `1px solid ${C.border}` }}
+          >
+            <ChevronUp size={15} />
+            <span className="truncate max-w-[240px]">{panelTitle}</span>
+          </button>
+        </div>
+      ) : (
+        <div
+          className="shrink-0 overflow-hidden"
+          style={{
+            height: `${effectivePanelH}px`,
+            background: C.card,
+            borderTop: `2px solid ${C.border}`,
+            transition: dragging ? 'none' : 'height 0.2s ease',
           }}
         >
-          <div className="flex items-center gap-2.5">
-            <div className="w-10 h-1.5 rounded-full" style={{ background: C.border }} />
-            <span className="text-sm font-bold" style={{ color: C.text }}>
-              {panelTitle}
-            </span>
+          {/* ── Drag handle bar ── */}
+          <div
+            className="flex items-center justify-between px-4 select-none"
+            style={{
+              height: '52px',
+              borderBottom: `1px solid ${C.border}`,
+              touchAction: 'none',
+              cursor: 'row-resize',
+              flexShrink: 0,
+            }}
+            onPointerDown={handleDragStart}
+            onPointerMove={handleDragMove}
+            onPointerUp={handleDragEnd}
+            onPointerCancel={handleDragEnd}
+            onClick={() => {
+              if (didDrag.current) return;
+              const noSelection = !selectedTree && !svgActiveZoneId && !selectedZone;
+              if (noSelection) setPanelExpanded(v => !v);
+            }}
+          >
+            <div className="flex items-center gap-2.5 flex-1 min-w-0">
+              {/* Three-line drag indicator */}
+              <div className="flex flex-col gap-[3px] shrink-0 opacity-35 pointer-events-none">
+                <div className="w-7 h-[2px] rounded-full" style={{ background: C.text }} />
+                <div className="w-7 h-[2px] rounded-full" style={{ background: C.text }} />
+                <div className="w-7 h-[2px] rounded-full" style={{ background: C.text }} />
+              </div>
+              <span className="text-sm font-bold truncate" style={{ color: C.text }}>
+                {panelTitle}
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5 shrink-0">
+              {!selectedTree && !svgActiveZoneId && !selectedZone && (
+                <span style={{ color: C.dim }}>
+                  {panelExpanded ? <ChevronDown size={15} /> : <ChevronUp size={15} />}
+                </span>
+              )}
+              {/* Hide button — stop propagation so it doesn't trigger drag or toggle */}
+              <button
+                className="w-8 h-8 rounded-lg flex items-center justify-center active:opacity-60 ml-1"
+                style={{ background: '#f3f4f6', border: `1px solid ${C.border}` }}
+                onPointerDown={(e) => e.stopPropagation()}
+                onClick={(e) => { e.stopPropagation(); setIsPanelHidden(true); }}
+              >
+                <X size={13} style={{ color: C.dim }} />
+              </button>
+            </div>
           </div>
-          {!selectedTree && !svgActiveZoneId && !selectedZone && (
-            <span style={{ color: C.dim }}>
-              {panelExpanded ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
-            </span>
-          )}
-        </div>
 
-        {/* Scrollable content */}
-        <div className="overflow-y-auto h-full px-4 pt-3" style={{ paddingBottom: '80px' }}>
-          {viewMode === 'svg' && selectedTree && svgActiveZone ? (
-            <TreeDetail tree={selectedTree} zone={svgActiveZone} onClose={() => setSelectedTree(null)} />
-          ) : viewMode === 'svg' && svgActiveZoneId && svgActiveZone ? (
-            <ZoneTreeSummary zone={svgActiveZone} onBack={() => { setSvgActiveZoneId(null); setPanelExpanded(false); }} />
-          ) : viewMode === 'satellite' && selectedZone ? (
-            <ZoneDetail
-              zone={selectedZone}
-              problems={problemsByZone[selectedZone.zone_id] ?? { disease: 0, pest: 0, weed: 0, total: 0 }}
-              onClose={() => setSelectedZone(null)}
-              onNavigate={() => navigate('/detections')}
-            />
-          ) : (
-            <SummaryPanel zones={mapData?.zones ?? []} problemsByZone={problemsByZone} />
-          )}
+          {/* ── Scrollable content ── */}
+          <div
+            className="overflow-y-auto px-4 pt-3"
+            style={{ height: `calc(${effectivePanelH}px - 52px)`, paddingBottom: '80px' }}
+          >
+            {selectedTree && selectedTreeZone ? (
+              <TreeDetail tree={selectedTree} zone={selectedTreeZone} onClose={() => { setSelectedTree(null); setSelectedTreeZone(null); }} />
+            ) : viewMode === 'svg' && svgActiveZoneId && svgActiveZone ? (
+              <ZoneTreeSummary zone={svgActiveZone} onBack={() => { setSvgActiveZoneId(null); setPanelExpanded(false); }} />
+            ) : viewMode === 'satellite' && selectedZone ? (
+              <ZoneDetail
+                zone={selectedZone}
+                problems={problemsByZone[selectedZone.zone_id] ?? { disease: 0, pest: 0, weed: 0, total: 0 }}
+                onClose={() => setSelectedZone(null)}
+                onNavigate={() => navigate('/detections')}
+              />
+            ) : (
+              <SummaryPanel zones={mapData?.zones ?? []} problemsByZone={problemsByZone} />
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

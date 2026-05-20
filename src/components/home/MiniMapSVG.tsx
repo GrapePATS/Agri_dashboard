@@ -63,41 +63,41 @@ export function MiniMapSVG({ mode = 'health', showHotspots = true, className = '
       <line x1="0" y1="76" x2="280" y2="76" stroke="rgba(255,255,255,0.4)" strokeWidth="0.5" />
       <line x1="0" y1="88" x2="280" y2="88" stroke="rgba(255,255,255,0.4)" strokeWidth="0.5" />
 
-      {/* Zone A — NW — ข้าวหอมมะลิ */}
+      {/* Zone 1 — NW — ส้มสายน้ำผึ้ง */}
       <rect x="2" y="2" width="128" height="72" rx="5"
         fill={zoneA.fill} fillOpacity="0.75" stroke={zoneA.stroke} strokeWidth="1.5" />
-      <text x="66" y="34" textAnchor="middle" fill={zoneA.text} fontSize="11" fontWeight="700">แปลง A</text>
-      <text x="66" y="48" textAnchor="middle" fill={zoneA.text} fontSize="8.5" opacity="0.85">ข้าวหอมมะลิ</text>
+      <text x="66" y="34" textAnchor="middle" fill={zoneA.text} fontSize="11" fontWeight="700">แปลง 1</text>
+      <text x="66" y="48" textAnchor="middle" fill={zoneA.text} fontSize="8.5" opacity="0.85">ส้มสายน้ำผึ้ง</text>
       <rect x="36" y="54" width="60" height="13" rx="6.5" fill="rgba(255,255,255,0.25)" />
       <text x="66" y="64" textAnchor="middle" fill={zoneA.text} fontSize="8" fontWeight="600">
         {mode === 'health' ? 'สุขภาพดี 87%' : 'ผลผลิตสูง'}
       </text>
 
-      {/* Zone B — NE — ข้าวเจ้า */}
+      {/* Zone 2 — NE — ส้มโชกุน */}
       <rect x="150" y="2" width="128" height="72" rx="5"
         fill={zoneB.fill} fillOpacity="0.75" stroke={zoneB.stroke} strokeWidth="1.5" />
-      <text x="214" y="34" textAnchor="middle" fill={zoneB.text} fontSize="11" fontWeight="700">แปลง B</text>
-      <text x="214" y="48" textAnchor="middle" fill={zoneB.text} fontSize="8.5" opacity="0.85">ข้าวเจ้า</text>
+      <text x="214" y="34" textAnchor="middle" fill={zoneB.text} fontSize="11" fontWeight="700">แปลง 2</text>
+      <text x="214" y="48" textAnchor="middle" fill={zoneB.text} fontSize="8.5" opacity="0.85">ส้มโชกุน</text>
       <rect x="184" y="54" width="60" height="13" rx="6.5" fill="rgba(255,255,255,0.25)" />
       <text x="214" y="64" textAnchor="middle" fill={zoneB.text} fontSize="8" fontWeight="600">
         {mode === 'health' ? 'เฝ้าระวัง 58%' : 'ผลผลิตปานกลาง'}
       </text>
 
-      {/* Zone C — SW — ข้าวหอมนิล */}
+      {/* Zone 3 — SW — ส้มนาเกลือ */}
       <rect x="2" y="90" width="128" height="68" rx="5"
         fill={zoneC.fill} fillOpacity="0.75" stroke={zoneC.stroke} strokeWidth="1.5" />
-      <text x="66" y="120" textAnchor="middle" fill={zoneC.text} fontSize="11" fontWeight="700">แปลง C</text>
-      <text x="66" y="133" textAnchor="middle" fill={zoneC.text} fontSize="8.5" opacity="0.85">ข้าวหอมนิล</text>
+      <text x="66" y="120" textAnchor="middle" fill={zoneC.text} fontSize="11" fontWeight="700">แปลง 3</text>
+      <text x="66" y="133" textAnchor="middle" fill={zoneC.text} fontSize="8.5" opacity="0.85">ส้มนาเกลือ</text>
       <rect x="36" y="139" width="60" height="13" rx="6.5" fill="rgba(255,255,255,0.25)" />
       <text x="66" y="149" textAnchor="middle" fill={zoneC.text} fontSize="8" fontWeight="600">
         {mode === 'health' ? 'วิกฤติ 31%' : 'ผลผลิตต่ำ'}
       </text>
 
-      {/* Zone D — SE — ข้าวหอมปทุม */}
+      {/* Zone 4 — SE — ส้มสายน้ำ */}
       <rect x="150" y="90" width="128" height="68" rx="5"
         fill={zoneD.fill} fillOpacity="0.75" stroke={zoneD.stroke} strokeWidth="1.5" />
-      <text x="214" y="120" textAnchor="middle" fill={zoneD.text} fontSize="11" fontWeight="700">แปลง D</text>
-      <text x="214" y="133" textAnchor="middle" fill={zoneD.text} fontSize="8.5" opacity="0.85">ข้าวหอมปทุม</text>
+      <text x="214" y="120" textAnchor="middle" fill={zoneD.text} fontSize="11" fontWeight="700">แปลง 4</text>
+      <text x="214" y="133" textAnchor="middle" fill={zoneD.text} fontSize="8.5" opacity="0.85">ส้มสายน้ำ</text>
       <rect x="184" y="139" width="60" height="13" rx="6.5" fill="rgba(255,255,255,0.25)" />
       <text x="214" y="149" textAnchor="middle" fill={zoneD.text} fontSize="8" fontWeight="600">
         {mode === 'health' ? 'สุขภาพดี 92%' : 'ผลผลิตสูง'}

@@ -8,7 +8,7 @@ const PROB_COLORS: Record<string, string> = {
 };
 const PROB_TYPES = ['แมลง', 'โรค', 'วัชพืช'] as const;
 const SEV_TYPES = ['Low', 'Medium', 'High'] as const;
-const SPECIES = ['ข้าวหอมมะลิ', 'ข้าวเจ้า', 'ข้าวหอมนิล', 'ข้าวหอมปทุม'];
+const SPECIES = ['ส้มสายน้ำผึ้ง', 'ส้มโชกุน', 'ส้มนาเกลือ', 'ส้มสายน้ำ'];
 
 const SVG_W = 560;
 const SVG_H = 440;
@@ -44,9 +44,9 @@ export function genTrees(zone: SvgZoneMeta): SvgTree[] {
       const grade: 'A' | 'B' | 'C' | 'U' =
         gr < A / 100 ? 'A' : gr < (A + B) / 100 ? 'B' : gr < (A + B + C) / 100 ? 'C' : 'U';
       const fruitCount =
-        grade === 'A' ? Math.floor(28 + rand() * 17)
-        : grade === 'B' ? Math.floor(15 + rand() * 13)
-        : grade === 'C' ? Math.floor(5 + rand() * 10)
+        grade === 'A' ? Math.floor(80 + rand() * 41)
+        : grade === 'B' ? Math.floor(50 + rand() * 31)
+        : grade === 'C' ? Math.floor(20 + rand() * 31)
         : 0;
       const hasProb = probIdxs.has(idx);
       const probType = hasProb ? PROB_TYPES[Math.floor(rand() * 3)] : null;
@@ -95,12 +95,14 @@ interface FarmSvgMapProps {
   selectedTreeId: string | null;
   onZoneClick: (zoneId: string) => void;
   onTreeClick: (tree: SvgTree) => void;
+  zoomLevel?: number;
 }
 
 export function FarmSvgMap({
   zones, showProblems, showStageColors,
   activeZoneId, selectedTreeId,
   onZoneClick, onTreeClick,
+  zoomLevel = 1,
 }: FarmSvgMapProps) {
   const zoneTreesMap = useMemo(
     () => Object.fromEntries(zones.map(z => [z.zone_id, genTrees(z)])),
@@ -109,9 +111,21 @@ export function FarmSvgMap({
 
   const activeZone = zones.find(z => z.zone_id === activeZoneId) ?? null;
 
-  const viewBox = activeZone
-    ? `${activeZone.svg_rect.x - 8} ${activeZone.svg_rect.y - 8} ${activeZone.svg_rect.w + 16} ${activeZone.svg_rect.h + 16}`
-    : `0 0 ${SVG_W} ${SVG_H}`;
+  const z = Math.max(0.1, zoomLevel);
+  const viewBox = (() => {
+    if (activeZone) {
+      const bx = activeZone.svg_rect.x - 8;
+      const by = activeZone.svg_rect.y - 8;
+      const bw = activeZone.svg_rect.w + 16;
+      const bh = activeZone.svg_rect.h + 16;
+      const cx = bx + bw / 2;
+      const cy = by + bh / 2;
+      return `${cx - bw / z / 2} ${cy - bh / z / 2} ${bw / z} ${bh / z}`;
+    }
+    const vw = SVG_W / z;
+    const vh = SVG_H / z;
+    return `${SVG_W / 2 - vw / 2} ${SVG_H / 2 - vh / 2} ${vw} ${vh}`;
+  })();
 
   return (
     <svg

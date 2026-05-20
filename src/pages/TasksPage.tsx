@@ -38,9 +38,9 @@ const PRIORITY = {
 };
 
 const ZONE_NAMES: Record<string, string> = {
-  'zone-a': 'แปลง A', 'zone-b': 'แปลง B', 'zone-c': 'แปลง C',
-  'zone-d': 'แปลง D', 'zone-e': 'แปลง E', 'zone-f': 'แปลง F',
-  'zone-g': 'แปลง G', 'zone-h': 'แปลง H', 'zone-i': 'แปลง I',
+  'zone-a': 'แปลง 1', 'zone-b': 'แปลง 2', 'zone-c': 'แปลง 3',
+  'zone-d': 'แปลง 4', 'zone-e': 'แปลง 2', 'zone-f': 'แปลง 1',
+  'zone-g': 'แปลง 2', 'zone-h': 'แปลง 3', 'zone-i': 'แปลง 4',
 };
 
 const TODAY = new Date().toISOString().split('T')[0];
